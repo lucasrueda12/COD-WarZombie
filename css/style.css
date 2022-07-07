@@ -1,0 +1,231 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+/* BODY */
+body{
+    background-color: #3F4E4F;
+}
+/* HEADER */
+header{
+    display: flex;
+    width: 100%;
+    height: 60px;
+    background-color: #A27B5C;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+
+header nav {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+}
+
+header nav ul {
+    display: flex;
+    width: 100%;
+    list-style: none;
+    justify-content: space-around;
+}
+
+header nav ul li{
+    display: flex;
+}
+
+header nav ul li a{
+    display: flex;
+    width: 100%;
+    border-radius: 5px;
+    padding: 10px 30px;
+    color: #fff;
+    font-size: 25px;
+    background-color:#2C3639;
+    text-decoration: none;
+}
+header nav ul li a:hover{
+    background-color:#435257;
+}
+
+/* MAIN */
+.presentacion{
+    display: flex;
+    width: 100%;
+    scroll-margin: 60px;
+
+}
+.presentacion h1{
+    font-size: 60px;
+    color: #fff;
+    width: 100%;
+    text-align: center;
+    background-color: #2C3639;
+}
+
+/* JUEGO */
+.juego{
+    background-color: #2C3639;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 80vh;
+    scroll-margin: 60px;
+}
+
+
+
+/* INFORMACION */
+.informacion{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    scroll-margin: 60px;
+    border-top: solid 1px #A27B5C;
+    border-bottom: solid 1px #A27B5C;
+
+}
+.info-Title{
+    color: #fff;
+    width: 100%;
+    text-align: center;
+    background-color: #3F4E4F;
+    font-size: 300%;
+    font-weight: bold;
+}
+
+.art-container{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    grid-template-areas: "txt img";
+    width: 100%;
+    margin-top: 1%;
+    margin-bottom: 1%;
+    padding-top: 1%;
+    justify-content:center;
+    border-top: solid 1px #A27B5C;
+
+}
+
+.info-container{
+    grid-area: txt;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 2% 5% 2% 5%;
+    align-items: center;
+    text-align: center;
+    color: #fff;
+}
+.info-container2{
+    grid-area: img;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 2% 5% 2% 5%;
+    align-items: center;
+    text-align: center;
+    color: #fff;
+}
+.info-video{
+    grid-area: txt;
+    display: flex;
+    justify-content: center;
+    width: 90%;
+}
+
+.info-container h2{
+    font-size: 200%;
+    font-weight: bold;
+    width: 100%;
+}
+.info-container p{
+    width: 100%;
+}
+
+.info-img{
+    grid-area: img;
+    display: flex;
+    justify-content: center;
+    width: 90%;
+}
+
+
+
+
+/* CREADOR */
+.creador{
+    display: flex;
+    flex-direction: column;
+    scroll-margin: 60px;
+    border: solid 1px #A27B5C;
+    border-bottom: none;
+    margin: 1%;
+}
+.creador-title{
+    color: #fff;
+    font-size: 300%;
+    text-align: center;
+    width: 100%;
+}
+.creador-opciones{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-around;
+    color: #fff;
+    font-size: 150%;
+    text-align: center;
+}
+.opcion{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.opcion-ancla{
+    display: flex;
+    width: 100px;
+    height: 100px;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+    background: #A27B5C;
+    justify-content: center;
+    align-items: center;
+}
+.ancla-img{
+    display: flex;
+    width: 70%;
+    object-fit: contain;
+}
+
+.acercaDeMi{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: solid 1px #A27B5C;
+    background-color: #b38e70;
+    margin: 2%;
+    padding: 2%;
+    text-align: center;
+    color: #fff;
+}
+.acercaDeMi h2{
+    font-size: 200%;
+    font-weight: bold;
+    margin-bottom: 2%;
+}
+
+/* CONTACTO */
+.contacto{
+    display: flex;
+    width: 100%;
+    scroll-margin: 60px;
+}
+/* FOOTER */

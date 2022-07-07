@@ -13,91 +13,126 @@
     <!-- HEADER -->
     <header>
         <nav>
-            <div>
-                <a href="index.html"><img src="logo" alt="logo de la pagina"></a>
-            </div>
             <ul>
                 <li>
-                    <a href="">jugar</a>
+                    <a href="#presentacion"><img src="" alt="logo de la pagina"></a>
                 </li>
                 <li>
-                    <a href="">Informacion</a>
+                    <a href="#jugar">jugar</a>
                 </li>
                 <li>
-                    <a href="">Creador</a>
+                    <a href="#informacion">Informacion</a>
                 </li>
                 <li>
-                    <a href="">Contacto</a>
+                    <a href="#creador">Creador</a>
+                </li>
+                <li>
+                    <a href="#contacto">Contacto</a>
                 </li>
             </ul>
         </nav>
     </header>
     <!-- MAIN -->
-    <main>
-            <!-- juego -->
-        <seccion>
-            
-            <h1>juego</h1>
-            <img src="src/img/0d2ddac5174ccc89cd14577edad03341.jpg" alt="">
+    <main id="main">
+
+        <!-- Presentacion -->
+        <div id="presentacion" class="presentacion">
+            <h1>COD WarZombie</h1>
+        </div>
+
+        <!-- juego -->
+        <seccion id="jugar" class="juego" >
+
         </seccion>
+        
         <!-- Informacion -->
-        <seccion>
-            <h2>Informacion</h2>
+        <seccion id="informacion" class="informacion">
+            <h2 class="info-Title">Informacion</h2>
             <!-- Descripcion -->
-            <article>
-                <div>
+            <article class="art-container">
+                <div class="info-container">
                     <h2>Descripcion</h2>
                     <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Debitis sint veniam nesciunt optio eveniet similique? Maiores et deserunt id amet. Maxime, quisquam? Hic cum dicta tempora distinctio sint tenetur labore.</p>
                 </div>
-                <img src="src/img/0d2ddac5174ccc89cd14577edad03341.jpg" alt="">
+                <img class="info-img img_rv" src="src/img/0d2ddac5174ccc89cd14577edad03341.jpg" alt="">
             </article>
             <!-- Jugabilidad -->
-            <article>
-                <iframe src="" frameborder="0"></iframe>
-                <div>
+            <article class="art-container">
+                <iframe class="info-video" width="560" height="315" src="https://www.youtube.com/embed/nC0Cgjd5O4A" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <div class="info-container2">
                     <h2>Jugabilidad</h2>
                     <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Earum corrupti maxime sapiente ipsa vitae, nulla veritatis eum fugit accusantium consectetur debitis ad ut dolore quis repellendus temporibus molestias blanditiis explicabo.</p>
                 </div>
             </article>
             <!-- Desarrollo -->
-            <article>
-                <div>
+            <article class="art-container">
+                <div class="info-container">
                     <h2>Desarrollo</h2>
                     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam incidunt corrupti assumenda porro dolor atque a eaque, officia libero repudiandae? Quam cum blanditiis debitis commodi aliquam officiis eveniet minima dicta.</p>
                 </div>
-                <img src="src/img/0d2ddac5174ccc89cd14577edad03341.jpg" alt="">
+                <img class="info-img" src="src/img/0d2ddac5174ccc89cd14577edad03341.jpg" alt="">
             </article>
         </seccion>
         <!-- Creador -->
-        <seccion>
-            <h2>Nosotros</h2>
-            <article>
-                <div>
-                    <img src="" alt="">
+        <seccion id="creador" class="creador">
+            <h2 class="creador-title">Nosotros</h2>
+            <article class="creador-opciones">
+                <div class="opcion">
+                    <a class="opcion-ancla" href="">
+                        <img class="ancla-img" src="src/img/code.png" alt="">
+                    </a>
                     <h3>Curriculum</h3>
                     <h4>Vitae</h4>
                 </div>
-                <div>
-                    <img src="" alt="">
+                <div class="opcion">
+                    <a class="opcion-ancla" href="">
+                        <img class="ancla-img" src="" alt="">
+                    </a>
                     <h3>Yo</h3>
                 </div>
-                <div>
-                    <img src="" alt="">
+                <div class="opcion">
+                    <a class="opcion-ancla" href="">
+                        <img class="ancla-img" src="src/img/github.png" alt="">
+                    </a>
                     <h3>Github</h3>
                 </div>
             </article>
-            <article>
+            <article class="acercaDeMi">
                 <h2>Lucas Rueda</h2>
                 <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Earum at necessitatibus excepturi a, sunt iste et reprehenderit totam cumque id impedit, architecto asperiores laboriosam possimus delectus quos itaque corporis? Adipisci!</p>
             </article>
         </seccion>
         <!-- Contacto -->
-        <seccion></seccion>
+        <seccion id="contacto" class="contacto">
+            <!-- contactanos -->
+            <article>
+                <h2>Contactanos</h2>
+                <div>
+                    <img src="" alt="">
+                    <h3>lucasrueda64@gmail.com</h3>
+                </div>
+                <h2>Seguinos en redes</h2>
+                <div>
+                    <img src="" alt=""><img src="" alt=""><img src="" alt="">
+                </div>
+            </article>
+            <!-- Formulario -->
+            <article>
+                <h2>Deseas recibir novedades?</h2>
+                <form action="">
+                    <label for="">Nombre y apellido*</label>
+                    <input type="">
+                    <label for="">Mail*</label>
+                    <input type="">
+                    <label for="">Compania</label>
+                    <input type="">
+                    <label for="">Mensaje</label>
+                    <textarea name="" id="" cols="30" rows="10"></textarea> 
+                    <input type="">
+                    <input type="submit" value="Enviar">
+                </form>
+            </article>
+        </seccion>
     </main>
-    <!-- FOOTER -->
-    <!-- botones para volver -->
-    <footer>
-
-    </footer>
 </body>
 </html>
