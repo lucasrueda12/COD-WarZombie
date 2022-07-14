@@ -30,6 +30,7 @@ header nav {
 header nav ul {
     display: flex;
     width: 100%;
+    height: 80%;
     list-style: none;
     justify-content: space-around;
 }
@@ -47,6 +48,9 @@ header nav ul li a{
     font-size: 25px;
     background-color:#2C3639;
     text-decoration: none;
+}
+.logo-img{
+    height: 100%;
 }
 header nav ul li a:hover{
     background-color:#435257;
@@ -68,15 +72,83 @@ header nav ul li a:hover{
 }
 
 /* JUEGO */
-.juego{
-    background-color: #2C3639;
+#juego{
+    background-color: #3c6875;
+    border: solid 2px #A27B5C;
     display: flex;
-    flex-direction: column;
     width: 100%;
-    height: 80vh;
+    height: 600px;
     scroll-margin: 60px;
+    position: relative;
+}
+#player{
+    z-index: 1000;
+    position: absolute;
+    width: 70px;
+    height: 80px;
+    top: 260px;
+    left: 50px;
+}
+#player img{
+    width: 100%;
+    height: 100%;
 }
 
+#fondo{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+#fondo img{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+#auto{
+    position: absolute;
+    width: 400px;
+    height: 200px;
+    top: 120px;
+    left: 150px;
+}
+#auto img{
+    width: 100%;
+    height: 100%;
+}
+#auto0{
+    position: absolute;
+    width: 400px;
+    height: 200px;
+    top: 0;
+    left: 0;
+}
+#auto0 img{
+    width: 100%;
+    height: 100%;
+}
+#auto1{
+    position: absolute;
+    width: 400px;
+    height: 200px;
+    top: 0;
+    left: 0;
+}
+#auto1 img{
+    width: 100%;
+    height: 100%;
+}
+#auto2{
+    position: absolute;
+    width: 400px;
+    height: 200px;
+    top: 0;
+    left: 0;
+}
+#auto2 img{
+    width: 100%;
+    height: 100%;
+}
 
 
 /* INFORMACION */

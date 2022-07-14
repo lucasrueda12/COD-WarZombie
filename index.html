@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="src/img/iconoCOD.ico" type="image/x-icon">
     <link rel="stylesheet" href="css/style.css">
-    <script src="js/main.js"></script>
-    <title>juego</title>
+    <title>COD WarZombie</title>
 </head>
 <body>
     <!-- LANDING PAGE -->
@@ -15,10 +15,10 @@
         <nav>
             <ul>
                 <li>
-                    <a href="#presentacion"><img src="" alt="logo de la pagina"></a>
+                    <a href="#presentacion"><img class="logo-img" src="src/img/LOGO.png" alt=""></a>
                 </li>
                 <li>
-                    <a href="#jugar">jugar</a>
+                    <a href="#juego">jugar</a>
                 </li>
                 <li>
                     <a href="#informacion">Informacion</a>
@@ -41,10 +41,36 @@
         </div>
 
         <!-- juego -->
-        <seccion id="jugar" class="juego" >
+        <seccion id="juego">
+            <!-- background -->
+            <article id="fondo">
+                <img src="src/img/calle.jpg" alt="fondo">
+            </article>
+
+            <!-- personaje -->
+            <article id="player">
+                <img src="src/img/personaje.png" alt="jugador">
+            </article>
+            
+            <!-- Auto -->
+            <article id="auto">
+                <img src="src/img/auto.png" alt="auto">
+            </article>
+            <!-- Colectivo -->
+            <article id="colectivo">
+                <img src="src/img/autobusNegroRoto.png" alt="colectivo">
+            </article>
+            <script src="js/main.js"></script>
 
         </seccion>
         
+
+
+
+
+
+
+
         <!-- Informacion -->
         <seccion id="informacion" class="informacion">
             <h2 class="info-Title">Informacion</h2>
@@ -134,5 +160,7 @@
             </article>
         </seccion>
     </main>
+
+    <!-- SCRIPS DEL JUEGO -->
 </body>
 </html>

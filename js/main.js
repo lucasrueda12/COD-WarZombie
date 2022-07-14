@@ -1,48 +1,102 @@
-let nombre = prompt("Ingresa tu nombre");
-let apellido = prompt("Ingresa tu apellido");
-let añoDeNacimiento = prompt("Ingresa tu año de nacimiento");
-let añoActual = 2022;
 
-const edadActual = (añoActual, añoDeNacimiento) => añoActual - añoDeNacimiento;
-let edad = edadActual(añoActual, añoDeNacimiento);
+document.addEventListener("keydown", movimiento);
+const player = document.getElementById('player');
 
-function permisoParaJugar(){
-    if ( edad > 16){
-        console.log("Puede jugar este juego. Tienes " + edad );
-        return true;
-    }else{
-        console.log("No cumple la edad necesaria para jugar");
+
+function movimiento(event) {
+    let x= capturarX();
+    let y = capturarY();
+
+    if(event.key == 'w' && noAvanzarArriba(y)){
+        moverArriba(y);
+    }
+    if(event.key == 's' && noAvanzarAbajo(y)){
+        moverAbajo(y);
+    }
+    if(event.key == 'a' && noAvanzarIzquierda(x)){
+        moverIzquierda(x);
+    }
+    if(event.key == 'd' && noAvanzarDerecha(x)){
+        moverDerecha(x);
+    }
+
+    //colision entorno
+    noAvanzar(x, y);
+}
+//capturar (x,y)
+function capturarX(){
+    let leftValor = window.getComputedStyle(player).getPropertyValue('left');
+    
+    let x = parseInt(leftValor);
+    console.log(x);
+    return x;
+}
+function capturarY(){
+    let topValor = window.getComputedStyle(player).getPropertyValue('top');
+    
+    let y = parseInt(topValor);
+    console.log(y);
+    return y;
+}
+
+/* movimientos */
+function moverArriba(y){
+    player.style.top = y - 10 + "px";
+}
+function moverAbajo(y){
+    player.style.top = y + 10 + "px";
+}
+function moverDerecha(x){
+    player.style.left = x + 10 + "px";
+}
+function moverIzquierda(x){
+    player.style.left = x - 10 + "px";
+}
+// no avanzar
+
+function noAvanzarArriba(y){
+    if (y<=140){
         return false;
     }
+    return true;
 }
-
-function startGame(nombre, apellido){
-    if(permisoParaJugar()){
-
-        console.log("Bienvenido " + nombre + " " + apellido);
-        
-        let respuesta = prompt("Estas listo para la aventura?");
-        
-        if(respuesta == "si" || respuesta == "SI" || respuesta == "Si" || respuesta == "sI"){
-            console.log("Esa es la actitud");
-        }else{
-            console.log("No te veo muy motivado");
-        }
-
-        console.log("Tu edad fue un numero impar " + impar() + " veces");
-
+function noAvanzarAbajo(y){
+    if (y>=380){
+        return false;
     }
+    return true;
 }
-
-function impar(){
-    let contadorNumImpar = 0;
-    
-    for(let i=0 ; i <= edad ; i++){
-        if(i%2 != 0){
-            contadorNumImpar++;
-        }
+function noAvanzarIzquierda(x){
+    if (x<=5){
+        return false;
     }
-    return contadorNumImpar;
+    return true;
+}
+function noAvanzarDerecha(x){
+    if (x>=1170){
+        return false;
+    }
+    return true;
 }
 
-startGame(nombre, apellido);
+
+const arrayObstacle = [];
+
+for(let i=0; i<3; i++){
+    arrayObstacle.push('<article id="auto' + i + '"><img src="src/img/auto.png" alt="auto"></article>')
+}
+
+for(let i=0; i<arrayObstacle.length ; i++){
+    document.write(arrayObstacle[i]);
+}
+
+for(let i=0; i<arrayObstacle.length ; i++){
+    const obstaculo = document.getElementById(('auto' + i));
+    let topValor = window.getComputedStyle(obstaculo).getPropertyValue('top');
+    let y = parseInt(topValor);
+    obstaculo.style.top = y + getRandomArbitrary(140, 380) + 'px';
+}
+
+function getRandomArbitrary(min, max) {
+    return Math.random() * (max - min) + min;
+}
