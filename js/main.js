@@ -357,4 +357,6 @@ for (const enemigo of arrayEnemigos) {
 
 arrayEnemigos.forEach((elem) => {console.log(elem.etiqueta)});
 
+const iDES = arrayEnemigos.map((elem) => 'enemy'+ elem.id);
+console.log(iDES);
 

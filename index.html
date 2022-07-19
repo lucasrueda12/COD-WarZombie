@@ -18,7 +18,7 @@
                     <a href="#presentacion"><img class="logo-img" src="src/img/LOGO.png" alt=""></a>
                 </li>
                 <li>
-                    <a href="#juego">jugar</a>
+                    <a href="#juego-cont">jugar</a>
                 </li>
                 <li>
                     <a href="#informacion">Informacion</a>
@@ -41,37 +41,37 @@
         </div>
 
         <!-- juego -->
-        <seccion id="juego">
-            <!-- background -->
-            <article id="fondo">
-                <img src="src/img/calle.jpg" alt="fondo">
-            </article>
+        <section class="container-juego" id="juego-cont">
+            <seccion id="juego">
+                <!-- background -->
+                <article id="fondo">
+                    <img src="src/img/calle.jpg" alt="fondo">
+                </article>
 
-            <!-- personaje -->
-            <article id="player">
-                <img src="src/img/personaje.png" alt="jugador">
-            </article>
+                <!-- personaje -->
+                <article id="player">
+                    <img src="src/img/personaje.png" alt="jugador">
+                </article>
 
-            <!-- Enemigo -->
-            <article id="enemy">
-                <img src="src/img/zombieIF.png" alt="enemigo">
-            </article>
-            
-            <!-- Auto -->
-            <article id="auto">
-                <img src="src/img/auto.png" alt="auto">
-            </article>
-            <!-- Colectivo -->
-            <article id="colectivo">
-                <img src="src/img/autobusNegroRoto.png" alt="colectivo">
-            </article>
-            <!--
-                SCRIPT del juego
-                                -->
-            <script src="js/main.js"></script>
-
-        </seccion>
-        
+                <!-- Enemigo -->
+                <article id="enemy">
+                    <img src="src/img/zombieIF.png" alt="enemigo">
+                </article>
+                
+                <!-- Auto -->
+                <article id="auto">
+                    <img src="src/img/auto.png" alt="auto">
+                </article>
+                <!-- Colectivo -->
+                <article id="colectivo">
+                    <img src="src/img/autobusNegroRoto.png" alt="colectivo">
+                </article>
+                <!--
+                    SCRIPT del juego
+                                    -->
+                <script src="js/main.js"></script>
+            </seccion>
+        </section>
 
 
 
@@ -92,7 +92,7 @@
             </article>
             <!-- Jugabilidad -->
             <article class="art-container">
-                <iframe class="info-video" width="560" height="315" src="https://www.youtube.com/embed/nC0Cgjd5O4A" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/Td-AvHH6sDI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 <div class="info-container2">
                     <h2>Jugabilidad</h2>
                     <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Earum corrupti maxime sapiente ipsa vitae, nulla veritatis eum fugit accusantium consectetur debitis ad ut dolore quis repellendus temporibus molestias blanditiis explicabo.</p>
@@ -139,21 +139,31 @@
         <!-- Contacto -->
         <seccion id="contacto" class="contacto">
             <!-- contactanos -->
-            <article>
-                <h2>Contactanos</h2>
-                <div>
-                    <img src="" alt="">
-                    <h3>lucasrueda64@gmail.com</h3>
+            <article class="siguenos">
+                <h2 class="sig-tit">Contactanos</h2>
+                <div class="mail">
+                    <a href="https://mail.google.com/" target="_blank">
+                        <img class="mail-icon" src="src/img/gmail.png" alt="">
+                        <h3>lucasrueda64@gmail.com</h3>
+                    </a>
                 </div>
-                <h2>Seguinos en redes</h2>
-                <div>
-                    <img src="" alt=""><img src="" alt=""><img src="" alt="">
+                <h2 class="sig-redes">Seguinos en redes</h2>
+                <div class="redes">
+                    <a href="https://www.instagram.com/" target="_blank">
+                        <img class="instagram-icon" src="src/img/instagram.png" alt="">
+                    </a>
+                    <a href="https://www.facebook.com/" target="_blank">
+                        <img class="facebook-icon" src="src/img/facebook.png" alt="">
+                    </a>
+                    <a href="https://www.twitter.com/" target="_blank">
+                        <img class="twitter-icon" src="src/img/gorjeo.png" alt="">
+                    </a>
                 </div>
             </article>
             <!-- Formulario -->
-            <article>
-                <h2>Deseas recibir novedades?</h2>
-                <form action="">
+            <article class="container-formulario">
+                <h2 class="for-tit">Deseas recibir novedades?</h2>
+                <form class="formulario" action="">
                     <label for="">Nombre y apellido*</label>
                     <input type="">
                     <label for="">Mail*</label>
@@ -162,7 +172,6 @@
                     <input type="">
                     <label for="">Mensaje</label>
                     <textarea name="" id="" cols="30" rows="10"></textarea> 
-                    <input type="">
                     <input type="submit" value="Enviar">
                 </form>
             </article>

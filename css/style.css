@@ -54,6 +54,7 @@ header nav ul li a{
     text-decoration: none;
 }
 .logo-img{
+    background-color: #fff;
     height: 100%;
 }
 header nav ul li a:hover{
@@ -81,16 +82,20 @@ header nav ul li a:hover{
 /* -------------------------------------------------------------------------- */
 /*                                    JUEGO                                   */
 /* -------------------------------------------------------------------------- */
-
+.container-juego{
+    width: auto;
+    height: auto;
+    scroll-margin-top: 60px;
+    overflow: hidden;
+}
 #juego{
     background-color: #3c6875;
     border: solid 2px #A27B5C;
     display: flex;
-    width: 100%;
+    width: 1980px;
     height: 600px;
     position: relative;
     overflow: hidden;
-    scroll-margin-top: 60px !important;
 }
 
 /* JUGADOR */
@@ -114,10 +119,13 @@ header nav ul li a:hover{
     position: absolute;
     width: 100%;
     height: 100%;
+    background-image: url(../src/img/calle.jpg);
+    background-repeat: repeat-x;
+    background-size: contain;
 }
 #fondo img{
     position: absolute;
-    width: 100%;
+    width: 0;
     height: 100%;
 }
 
@@ -384,7 +392,126 @@ header nav ul li a:hover{
 /* -------------------------------------------------------------------------- */
 
 .contacto{
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: auto;
+    grid-template-areas: "siguenos formulario";
+    border: solid 1px #A27B5C;
+    border-top: none;
+    scroll-margin: 60px;
+    margin: -1% 1% 1% 1%;
+    padding: 1%;
+}
+
+.siguenos{
+    grid-area: siguenos;
     display: flex;
     width: 100%;
-    scroll-margin: 60px;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
 }
+.sig-tit{
+    width: 100%;
+    font-size: 200%;
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+}
+.mail{
+    display: flex;
+    flex-direction: row;
+    margin: 1%;
+}
+.mail a{
+    display: flex;
+    flex-direction: row;
+    margin: 1%;
+    text-decoration: none;
+}
+.mail-icon{
+    margin-right: 5%;
+    width: 40px;
+    height: 40px;
+}
+.mail h3{
+    margin: auto;
+    width: 100%;
+    font-size: 150%;
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+}
+
+
+.sig-redes{
+    width: 100%;
+    font-size: 200%;
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 4%;
+}
+.redes{
+    display: flex;
+    width: 100%;
+    margin: 1%;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+.redes a{
+    width: 40px;
+    height: 40px;
+}
+.redes a img{
+    width: 100%;
+    height: 100%;
+}
+
+
+
+.container-formulario{
+    grid-area: formulario;
+    display: flex;
+    width: 100%;
+    margin: auto;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.for-tit{
+    width: 80%;
+    font-size: 200%;
+    color: #fff;
+    font-weight: bold;
+}
+.formulario{
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    justify-content: space-between;
+}
+.formulario label{
+    font-size: 150%;
+    font-weight: bold;
+    color: #fff;
+}
+.formulario input{
+    margin-bottom: 1%;
+    background-color: #3c6875;
+    border: solid 1px black;
+    width: 100%;
+    height: 30px;
+    border-radius: 5px;
+}
+.formulario textarea{
+    margin-bottom: 1%;
+    background-color: #3c6875;
+    border: solid 1px black;
+    border-radius: 5px;
+    width: 100%;
+    height: 80px;
+}
+
+
+
