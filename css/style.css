@@ -125,10 +125,10 @@ header nav ul li a:hover{
 
 #auto{
     position: absolute;
-    width: 400px;
-    height: 200px;
-    top: 120px;
-    left: 150px;
+    width: 250px;
+    height: 100px;
+    top: 170px;
+    left: 260px;
 }
 #auto img{
     width: 100%;
@@ -136,8 +136,8 @@ header nav ul li a:hover{
 }
 #auto0{
     position: absolute;
-    width: 400px;
-    height: 200px;
+    width: 250px;
+    height: 100px;
     top: 0;
     left: 0;
 }
@@ -147,8 +147,8 @@ header nav ul li a:hover{
 }
 #auto1{
     position: absolute;
-    width: 400px;
-    height: 200px;
+    width: 250px;
+    height: 100px;
     top: 0;
     left: 0;
 }
@@ -158,8 +158,8 @@ header nav ul li a:hover{
 }
 #auto2{
     position: absolute;
-    width: 400px;
-    height: 200px;
+    width: 250px;
+    height: 100px;
     top: 0;
     left: 0;
 }

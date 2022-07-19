@@ -1,51 +1,57 @@
+/* -------------------------------------------------------------------------- */
+/*                                   OBJETOS                                  */
+/* -------------------------------------------------------------------------- */
 
-/* document.addEventListener("keydown", movimiento);
-const player = document.getElementById('player');
+/* -------------------------------------------------------------------------- */
+/*                                   JUGADOR                                  */
+/* -------------------------------------------------------------------------- */
+
 
 
 function movimiento(event) {
-    let x= capturarX();
-    let y = capturarY();
+    jugador.x= capturarX();
+    jugador.y= capturarY();
 
-    if(event.key == 'w' && noAvanzarArriba(y)){
-        moverArriba(y);
+
+    if(event.key == 'w' && noAvanzarArriba(jugador.y)){
+        moverArriba(jugador.jugador ,jugador.y);
     }
-    if(event.key == 's' && noAvanzarAbajo(y)){
-        moverAbajo(y);
+    if(event.key == 's' && noAvanzarAbajo(jugador.y)){
+        moverAbajo(jugador.jugador ,jugador.y);
     }
-    if(event.key == 'a' && noAvanzarIzquierda(x)){
-        moverIzquierda(x);
+    if(event.key == 'a' && noAvanzarIzquierda(jugador.x)){
+        moverIzquierda(jugador.jugador ,jugador.x);
     }
-    if(event.key == 'd' && noAvanzarDerecha(x)){
-        moverDerecha(x);
+    if(event.key == 'd' && noAvanzarDerecha(jugador.x)){
+        moverDerecha(jugador.jugador ,jugador.x);
     }
 }
 
 function capturarX(){
-    let leftValor = window.getComputedStyle(player).getPropertyValue('left');
+    let leftValor = window.getComputedStyle(jugador.jugador).getPropertyValue('left');
     
     let x = parseInt(leftValor);
     console.log(x);
     return x;
 }
 function capturarY(){
-    let topValor = window.getComputedStyle(player).getPropertyValue('top');
+    let topValor = window.getComputedStyle(jugador.jugador).getPropertyValue('top');
     
     let y = parseInt(topValor);
     console.log(y);
     return y;
 }
 
-function moverArriba(y){
+function moverArriba(player ,y){
     player.style.top = y - 10 + "px";
 }
-function moverAbajo(y){
+function moverAbajo(player, y){
     player.style.top = y + 10 + "px";
 }
-function moverDerecha(x){
+function moverDerecha(player, x){
     player.style.left = x + 10 + "px";
 }
-function moverIzquierda(x){
+function moverIzquierda(player, x){
     player.style.left = x - 10 + "px";
 }
 
@@ -72,26 +78,30 @@ function noAvanzarDerecha(x){
         return false;
     }
     return true;
-} */
-
-
-const arrayObstacle = [];
-
-for(let i=0; i<3; i++){
-    arrayObstacle.push('<article id="auto' + i + '"><img src="src/img/auto.png" alt="auto"></article>')
 }
 
-for(let i=0; i<arrayObstacle.length ; i++){
-    document.write(arrayObstacle[i]);
+function estaDentro(e){
+    return ((jugador.x > e.x - jugador.ancho)  && (jugador.x < e.x + e.ancho  + jugador.ancho)
+    && (jugador.y  > e.y - e.alto - jugador.alto) && (jugador.y < e.y  + jugador.alto));
 }
+function noTraspasar(e){
+    console.log(estaDentro(e));
 
-for(let i=0; i<arrayObstacle.length ; i++){
-    const obstaculo = document.getElementById(('auto' + i));
-    obstaculo.style.top = getRandomArbitrary(140, 380) + 'px';
-    obstaculo.style.left = getRandomArbitrary(400, 1000) + 'px';
-
+    if (estaDentro(e)) {
+        if (jugador.x > e.x - jugador.ancho) {
+            moverArriba(jugador.jugador ,jugador.y);
+        }
+        if (jugador.x < e.x + e.getAncho()) {
+            moverAbajo(jugador.jugador ,jugador.y);
+        }
+        if (jugador.y > e.y - jugador.alto) {
+            moverIzquierda(jugador.jugador ,jugador.x);
+        }
+        if (jugador.y < e.y + e.getAlto()) {
+            moverDerecha(jugador.jugador ,jugador.x);
+        }
+    }
 }
-
 
 // generar valores randoms
 function getRandomArbitrary(min, max) {
@@ -99,23 +109,15 @@ function getRandomArbitrary(min, max) {
 }
 
 
-/* -------------------------------------------------------------------------- */
-/*                                   OBJETOS                                  */
-/* -------------------------------------------------------------------------- */
-
-/* -------------------------------------------------------------------------- */
-/*                                   JUGADOR                                  */
-/* -------------------------------------------------------------------------- */
-
 class Player{
     constructor(x, y, ancho, alto, speed){
+        this.jugador = document.getElementById('player');
         this.x = x;
         this.y = y;
         this.ancho = ancho;
         this.alto = alto;
         this.angulo = 0;
         this.speed = speed;
-        this.jugador = this.obtenerID();
     }
 
     getX(){ return this.x; }
@@ -123,29 +125,33 @@ class Player{
     getAncho(){ return this.ancho; }
     getAlto(){ return this.alto; }
 
+
+    /*
     obtenerID(){
         return document.getElementById('player');
     }
 
+    *//* 
     escucharTeclado(){
-        document.addEventListener("keydown", this.movimiento);
+        return document.addEventListener("keydown", this.movimiento);
     }
 
     movimiento(event) {
     this.capturarX;
     this.capturarY;
-    let a = this.AvanzarArriba();
 
-    if(event.key == 'w' && a){
-        this.moverArriba();
+
+    if(event.key == 'w' && this.AvanzarAbajo()){
+        console.log("anda");
+        jugador.style.top = this.y - 10 + "px";
     }
-    if(event.key == 's' && this.AvanzarAbajo()){
+    if(event.key == 's' && this.AvanzarAbajo){
         this.moverAbajo();
     }
-    if(event.key == 'a' && this.AvanzarIzquierda()){
+    if(event.key == 'a' && this.AvanzarIzquierda){
         this.moverIzquierda();
     }
-    if(event.key == 'd' && this.AvanzarDerecha()){
+    if(event.key == 'd' && this.AvanzarDerecha){
         this.moverDerecha();
     }
 }
@@ -153,17 +159,19 @@ class Player{
     capturarX(){
         let leftValor = window.getComputedStyle(this.jugador).getPropertyValue('left');
         
-        this.x = parseInt(leftValor);
+        let x = parseInt(leftValor);
         console.log(x);
+        return x;
     }
 
     capturarY(){
         let topValor = window.getComputedStyle(this.jugador).getPropertyValue('top');        
-        this.y = parseInt(topValor);
+        let y = parseInt(topValor);
         console.log(y);
-    }
+        return y;
+    } */
 
-    /* movimientos */
+    /* movimientos *//* 
     moverArriba(){
         this.jugador.style.top = this.y - 10 + "px";
     }
@@ -179,8 +187,6 @@ class Player{
     moverIzquierda(){
         this.jugador.style.left = this.x - 10 + "px";
     }
-    // no avanzar
-
 
     AvanzarArriba(){
         if (this.y<=140){
@@ -208,22 +214,52 @@ class Player{
             return false;
         }
         return true;
-    }
+    }  */
 }
 
-const jugador = new Player(40, 260, 70, 40, 10);
-document.addEventListener("keydown", jugador.movimiento);
-
-
-
+const jugador = new Player(40, 260 , 70, 40, 10);
+document.addEventListener("keydown", movimiento);
 
 /* -------------------------------------------------------------------------- */
 /*                                 OBSTACULOS                                 */
 /* -------------------------------------------------------------------------- */
 
+class Obstaculo{
+    constructor(id, x, y, ancho, alto){
+        this.id = 'auto' + id;
+        this.etiqueta= '<article id="auto' + id + '"><img src="src/img/auto.png" alt="auto"></article>';
+        this.x = x;
+        this.y = y;
+        this.ancho = ancho;
+        this.alto = alto;
+    }
+    getX(){ return this.x; }
+    getY(){ return this.y; }
+    getAncho(){ return this.ancho; }
+    getAlto(){ return this.alto; }
+}
+
+
+const arrayObstacle = [];
+
+for(let i=0; i<3; i++){
+    const obstaculo = new Obstaculo(i, getRandomArbitrary(400, 1000), getRandomArbitrary(140, 380), 0, 0);
+    arrayObstacle.push(obstaculo);
+}
+
+for(const obstaculo of arrayObstacle){
+    document.write(obstaculo.etiqueta);
+
+    const auto = document.getElementById(obstaculo.id);
+    auto.style.top = obstaculo.y + 'px';
+    auto.style.left = obstaculo.x + 'px';
+}
+arrayObstacle.forEach((obst) => {noTraspasar(obst)});
+
 /* -------------------------------------------------------------------------- */
 /*                                   ENEMIGO                                  */
 /* -------------------------------------------------------------------------- */
+
 class Enemy{
     constructor(id, x, y, ancho, alto, speed){
         this.id = id;
@@ -318,5 +354,7 @@ for (const enemigo of arrayEnemigos) {
     enemigo.dibujar();
     enemigo.actualizarPosicion();
 }
+
+arrayEnemigos.forEach((elem) => {console.log(elem.etiqueta)});
 
 
