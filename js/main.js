@@ -9,9 +9,14 @@
 
 
 function movimiento(event) {
+    
+    arrayObstacle.forEach((el)=> console.log(el.x, el.y, el.ancho, el.alto));
+
     jugador.x= capturarX();
     jugador.y= capturarY();
-
+    for (const obst of arrayObstacle){
+        console.log(estaDentro(obst));
+    }
 
     if(event.key == 'w' && noAvanzarArriba(jugador.y)){
         moverArriba(jugador.jugador ,jugador.y);
@@ -80,9 +85,9 @@ function noAvanzarDerecha(x){
     return true;
 }
 
-function estaDentro(e){
-    return ((jugador.x > e.x - jugador.ancho)  && (jugador.x < e.x + e.ancho  + jugador.ancho)
-    && (jugador.y  > e.y - e.alto - jugador.alto) && (jugador.y < e.y  + jugador.alto));
+function estaDentro(o){
+    return (jugador.x < o.x + o.ancho  && jugador.x + jugador.ancho > o.x
+    && jugador.y < o.y + o.alto && jugador.y + jugador > o.y);
 }
 function noTraspasar(e){
     console.log(estaDentro(e));
@@ -119,13 +124,6 @@ class Player{
         this.angulo = 0;
         this.speed = speed;
     }
-
-    getX(){ return this.x; }
-    getY(){ return this.y; }
-    getAncho(){ return this.ancho; }
-    getAlto(){ return this.alto; }
-
-
     /*
     obtenerID(){
         return document.getElementById('player');
@@ -217,8 +215,7 @@ class Player{
     }  */
 }
 
-const jugador = new Player(40, 260 , 70, 40, 10);
-document.addEventListener("keydown", movimiento);
+
 
 /* -------------------------------------------------------------------------- */
 /*                                 OBSTACULOS                                 */
@@ -233,28 +230,10 @@ class Obstaculo{
         this.ancho = ancho;
         this.alto = alto;
     }
-    getX(){ return this.x; }
-    getY(){ return this.y; }
-    getAncho(){ return this.ancho; }
-    getAlto(){ return this.alto; }
 }
 
 
-const arrayObstacle = [];
 
-for(let i=0; i<3; i++){
-    const obstaculo = new Obstaculo(i, getRandomArbitrary(400, 1000), getRandomArbitrary(140, 380), 0, 0);
-    arrayObstacle.push(obstaculo);
-}
-
-for(const obstaculo of arrayObstacle){
-    document.write(obstaculo.etiqueta);
-
-    const auto = document.getElementById(obstaculo.id);
-    auto.style.top = obstaculo.y + 'px';
-    auto.style.left = obstaculo.x + 'px';
-}
-arrayObstacle.forEach((obst) => {noTraspasar(obst)});
 
 /* -------------------------------------------------------------------------- */
 /*                                   ENEMIGO                                  */
@@ -286,11 +265,6 @@ class Enemy{
         enemigo.style.left = this.x + 'px';
     }
 
-    getX(){ return this.x; }
-    getY(){ return this.y; }
-    getAncho(){ return this.ancho; }
-    getAlto(){ return this.alto; }
-
     moverse() {
 		this.x += this.speed * Math.cos(this.angulo);
 		this.y += this.speed * Math.sin(this.angulo);
@@ -299,52 +273,23 @@ class Enemy{
     getAnguloEntrePuntos(playerX, playerY){
         this.angulo = Math.atan2(this.y-playerY, this.x-playerX);
     }
-
-    noAvanzarEnemyEntorno(){
-        if (this.x < 5) {
-			this.x += this.speed;
-		}
-
-		if (this.x > 1170) {
-			this.x -= this.speed;
-		}
-		if (this.y < 140) {
-			this.y += this.speed;
-		}
-		if (this.y > 370) {
-			this.y -= this.speed;
-		}
-    }
-
-    estaDentro(e){
-        return ((this.x > e.getX() - this.ancho)  && (this.x < e.getX() + e.getWidth() / 2 + this.ancho)
-        && (this.y  > e.getY() - e.getWidth() / 2 - this.alto) && (this.y < e.getY() + e.getHeight() / 2 + this.alto));
-    }
-    noTraspasar(e){
-        if (this.estaDentro(e)) {
-            if (this.x > e.getX() - this.ancho) {
-                this.x += this.speed;
-            }
-            if (this.x < e.getX() + e.getAncho()) {
-                this.x -= this.speed;
-            }
-            if (this.y > e.getY() - this.alto) {
-                this.y += this.speed;
-            }
-            if (this.y < e.getY() + e.getAlto()) {
-                this.y -= this.speed;
-            }
-        }else{
-            getAnguloEntrePuntos(e.getX(), e.getY());
-        }
-    }
 }
+
+
+
+
+
+
+
+/* -------------------------------------------------------------------------- */
+/*                                  CREACION                                  */
+/* -------------------------------------------------------------------------- */
 
 const arrayEnemigos = [];
 
 for(let i=0; i<3; i++){
-    let rx = getRandomArbitrary(50, 1170);
-    let ry = getRandomArbitrary(140, 370);
+    let rx = Math.round(getRandomArbitrary(50, 1170));
+    let ry = Math.round(getRandomArbitrary(140, 370));
     let enemigo = new Enemy(i, rx, ry, 117, 183, 10);
     arrayEnemigos.push(enemigo);
 }
@@ -355,8 +300,34 @@ for (const enemigo of arrayEnemigos) {
     enemigo.actualizarPosicion();
 }
 
+const arrayObstacle = [];
+
+for(let i=0; i<3; i++){
+    const obstaculo = new Obstaculo(i, Math.round(getRandomArbitrary(400, 1000)), Math.round(getRandomArbitrary(140, 380)), 250, 100);
+    arrayObstacle.push(obstaculo);
+}
+
+for(const obstaculo of arrayObstacle){
+    document.write(obstaculo.etiqueta);
+
+    const auto = document.getElementById(obstaculo.id);
+    auto.style.top = obstaculo.y + 'px';
+    auto.style.left = obstaculo.x + 'px';
+}
+
+const jugador = new Player(40, 260 , 70, 40, 10);
+document.addEventListener("keydown", movimiento);
+
 arrayEnemigos.forEach((elem) => {console.log(elem.etiqueta)});
 
 const iDES = arrayEnemigos.map((elem) => 'enemy'+ elem.id);
-console.log(iDES);
+console.log(iDES.join(', '));
+
+const resultado = arrayObstacle.some((el)=> el.x > jugador.x);
+console.log("se fija si hay algun obstaculo delante del jugador");
+console.log(resultado);
+
+const nuevoArrayObstacle = arrayObstacle.filter((el)=> el.x < jugador.x);
+console.log("devueve un nuevo array con los elementos que esten atras del jugador");
+console.log(nuevoArrayObstacle);
 

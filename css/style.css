@@ -107,6 +107,7 @@ header nav ul li a:hover{
     height: 80px;
     top: 260px;
     left: 50px;
+    background-color: blue;
 }
 #player img{
     width: 100%;
@@ -137,6 +138,8 @@ header nav ul li a:hover{
     height: 100px;
     top: 170px;
     left: 260px;
+    background-color: red;
+
 }
 #auto img{
     width: 100%;
@@ -148,6 +151,8 @@ header nav ul li a:hover{
     height: 100px;
     top: 0;
     left: 0;
+    background-color: red;
+
 }
 #auto0 img{
     width: 100%;
@@ -159,6 +164,8 @@ header nav ul li a:hover{
     height: 100px;
     top: 0;
     left: 0;
+    background-color: red;
+
 }
 #auto1 img{
     width: 100%;
@@ -170,6 +177,8 @@ header nav ul li a:hover{
     height: 100px;
     top: 0;
     left: 0;
+    background-color: red;
+
 }
 #auto2 img{
     width: 100%;
@@ -184,6 +193,8 @@ header nav ul li a:hover{
     height: 80px;
     top: 260px;
     left: 50px;
+    background-color: grey;
+
 }
 #enemy img{
     width: 100%;
@@ -196,6 +207,8 @@ header nav ul li a:hover{
     height: 80px;
     top: 260px;
     left: 50px;
+    background-color: grey;
+
 }
 #enemy0 img{
     width: 100%;
@@ -208,6 +221,8 @@ header nav ul li a:hover{
     height: 80px;
     top: 260px;
     left: 50px;
+    background-color: grey;
+
 }
 #enemy1 img{
     width: 100%;
@@ -220,6 +235,8 @@ header nav ul li a:hover{
     height: 80px;
     top: 260px;
     left: 50px;
+    background-color: grey;
+
 }
 #enemy2 img{
     width: 100%;
@@ -232,6 +249,8 @@ header nav ul li a:hover{
     height: 80px;
     top: 260px;
     left: 50px;
+    background-color: grey;
+
 }
 #enemy3 img{
     width: 100%;
