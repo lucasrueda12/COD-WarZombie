@@ -331,3 +331,10 @@ const nuevoArrayObstacle = arrayObstacle.filter((el)=> el.x < jugador.x);
 console.log("devueve un nuevo array con los elementos que esten atras del jugador");
 console.log(nuevoArrayObstacle);
 
+const desorden = [20, 50 ,10, 4, 1, 8, 19];
+console.log(desorden);
+desorden.sort((a, b) => a - b);
+
+console.log("ya no hay desorden");
+console.log(desorden);
+
