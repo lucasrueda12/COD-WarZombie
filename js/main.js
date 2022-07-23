@@ -1,22 +1,83 @@
 /* -------------------------------------------------------------------------- */
-/*                                   OBJETOS                                  */
+/*                                   CLASES                                   */
 /* -------------------------------------------------------------------------- */
 
+class Player{
+    constructor(x, y, ancho, alto, speed){
+        this.jugador = document.querySelector('#player');
+        this.x = x;
+        this.y = y;
+        this.ancho = ancho;
+        this.alto = alto;
+        this.angulo = 0;
+        this.speed = speed;
+    }
+    
+}
+
+class Enemy{
+    constructor(id, x, y, ancho, alto, speed){
+        this.id = id;
+        this.etiqueta = '<article id="enemy'+this.id+'"><img src="src/img/zombieIF.png" alt="enemigo"></article>';
+        this.x = x;
+        this.y = y;
+        this.ancho = ancho;
+        this.alto = alto;
+        this.speed = speed;
+        this.angulo = 0;
+    }
+
+    dibujar(){
+        document.write(this.etiqueta);
+    }
+
+    obtenerID(){
+        return document.querySelector(('#enemy'+this.id));
+    }
+
+    actualizarPosicion(){
+        const enemigo = this.obtenerID();
+        enemigo.style.top = this.y + 'px';
+        enemigo.style.left = this.x + 'px';
+    }
+
+    moverse() {
+		this.x += this.speed * Math.cos(this.angulo);
+		this.y += this.speed * Math.sin(this.angulo);
+	}
+
+    getAnguloEntrePuntos(playerX, playerY){
+        this.angulo = Math.atan2(this.y-playerY, this.x-playerX);
+    }
+}
+
+class Obstaculo{
+    constructor(id, x, y, ancho, alto){
+        this.id = '#auto' + id;
+        this.etiqueta= '<article id="auto' + id + '"><img src="src/img/auto.png" alt="auto"></article>';
+        this.x = x;
+        this.y = y;
+        this.ancho = ancho;
+        this.alto = alto;
+    }
+}
+
 /* -------------------------------------------------------------------------- */
-/*                                   JUGADOR                                  */
+/*                                  FUNCIONES                                 */
 /* -------------------------------------------------------------------------- */
 
 
+/* -------------------------------------------------------------------------- */
+/*                                 MOVIMIENTOS                                */
+/* -------------------------------------------------------------------------- */
 
 function movimiento(event) {
-    
-    arrayObstacle.forEach((el)=> console.log(el.x, el.y, el.ancho, el.alto));
-
     jugador.x= capturarX();
     jugador.y= capturarY();
-    for (const obst of arrayObstacle){
-        console.log(estaDentro(obst));
-    }
+
+    arrayObstacle.forEach((el)=> {
+        noTraspasar(el)
+    });
 
     if(event.key == 'w' && noAvanzarArriba(jugador.y)){
         moverArriba(jugador.jugador ,jugador.y);
@@ -30,6 +91,10 @@ function movimiento(event) {
     if(event.key == 'd' && noAvanzarDerecha(jugador.x)){
         moverDerecha(jugador.jugador ,jugador.x);
     }
+
+    arrayObstacle.forEach((el)=> {
+        noTraspasar(el)
+    });
 }
 
 function capturarX(){
@@ -60,6 +125,10 @@ function moverIzquierda(player, x){
     player.style.left = x - 10 + "px";
 }
 
+/* -------------------------------------------------------------------------- */
+/*                                 COLISIONES                                 */
+/* -------------------------------------------------------------------------- */
+
 function noAvanzarArriba(y){
     if (y<=140){
         return false;
@@ -86,24 +155,30 @@ function noAvanzarDerecha(x){
 }
 
 function estaDentro(o){
-    return (jugador.x < o.x + o.ancho  && jugador.x + jugador.ancho > o.x
-    && jugador.y < o.y + o.alto && jugador.y + jugador > o.y);
+    return (jugador.x < o.x+o.ancho  && jugador.x+jugador.ancho > o.x
+    && jugador.y < o.y+o.alto && jugador.y+jugador.alto > o.y);
 }
-function noTraspasar(e){
-    console.log(estaDentro(e));
 
+
+function noTraspasar(e){
     if (estaDentro(e)) {
-        if (jugador.x > e.x - jugador.ancho) {
-            moverArriba(jugador.jugador ,jugador.y);
+        console.log("toca");
+        if (jugador.x > e.x ) {
+            console.log("izq");
+            moverDerecha(jugador.jugador ,jugador.x);
         }
-        if (jugador.x < e.x + e.getAncho()) {
-            moverAbajo(jugador.jugador ,jugador.y);
-        }
-        if (jugador.y > e.y - jugador.alto) {
+        if (jugador.x < e.x) {
+            console.log("der");
             moverIzquierda(jugador.jugador ,jugador.x);
         }
-        if (jugador.y < e.y + e.getAlto()) {
-            moverDerecha(jugador.jugador ,jugador.x);
+        if (jugador.y < e.y) {
+            console.log("arriba");
+            moverArriba(jugador.jugador ,jugador.y);
+        }
+        if (jugador.y > e.y) {
+            console.log("abajo");
+
+            moverAbajo(jugador.jugador ,jugador.y);
         }
     }
 }
@@ -114,176 +189,11 @@ function getRandomArbitrary(min, max) {
 }
 
 
-class Player{
-    constructor(x, y, ancho, alto, speed){
-        this.jugador = document.getElementById('player');
-        this.x = x;
-        this.y = y;
-        this.ancho = ancho;
-        this.alto = alto;
-        this.angulo = 0;
-        this.speed = speed;
-    }
-    /*
-    obtenerID(){
-        return document.getElementById('player');
-    }
-
-    *//* 
-    escucharTeclado(){
-        return document.addEventListener("keydown", this.movimiento);
-    }
-
-    movimiento(event) {
-    this.capturarX;
-    this.capturarY;
-
-
-    if(event.key == 'w' && this.AvanzarAbajo()){
-        console.log("anda");
-        jugador.style.top = this.y - 10 + "px";
-    }
-    if(event.key == 's' && this.AvanzarAbajo){
-        this.moverAbajo();
-    }
-    if(event.key == 'a' && this.AvanzarIzquierda){
-        this.moverIzquierda();
-    }
-    if(event.key == 'd' && this.AvanzarDerecha){
-        this.moverDerecha();
-    }
-}
-
-    capturarX(){
-        let leftValor = window.getComputedStyle(this.jugador).getPropertyValue('left');
-        
-        let x = parseInt(leftValor);
-        console.log(x);
-        return x;
-    }
-
-    capturarY(){
-        let topValor = window.getComputedStyle(this.jugador).getPropertyValue('top');        
-        let y = parseInt(topValor);
-        console.log(y);
-        return y;
-    } */
-
-    /* movimientos *//* 
-    moverArriba(){
-        this.jugador.style.top = this.y - 10 + "px";
-    }
-
-    moverAbajo(){
-        this.jugador.style.top = this.y + 10 + "px";
-    }
-
-    moverDerecha(){
-        this.jugador.style.left = this.x + 10 + "px";
-    }
-
-    moverIzquierda(){
-        this.jugador.style.left = this.x - 10 + "px";
-    }
-
-    AvanzarArriba(){
-        if (this.y<=140){
-            return false;
-        }
-        return true;
-    }
-
-    AvanzarAbajo(){
-        if (this.y>=380){
-            return false;
-        }
-        return true;
-    }
-
-    AvanzarIzquierda(){
-        if (this.x<=5){
-            return false;
-        }
-        return true;
-    }
-
-    AvanzarDerecha(){
-        if (this.x>=1170){
-            return false;
-        }
-        return true;
-    }  */
-}
-
-
-
-/* -------------------------------------------------------------------------- */
-/*                                 OBSTACULOS                                 */
-/* -------------------------------------------------------------------------- */
-
-class Obstaculo{
-    constructor(id, x, y, ancho, alto){
-        this.id = 'auto' + id;
-        this.etiqueta= '<article id="auto' + id + '"><img src="src/img/auto.png" alt="auto"></article>';
-        this.x = x;
-        this.y = y;
-        this.ancho = ancho;
-        this.alto = alto;
-    }
-}
-
-
-
-
-/* -------------------------------------------------------------------------- */
-/*                                   ENEMIGO                                  */
-/* -------------------------------------------------------------------------- */
-
-class Enemy{
-    constructor(id, x, y, ancho, alto, speed){
-        this.id = id;
-        this.etiqueta = '<article id="enemy'+this.id+'"><img src="src/img/zombieIF.png" alt="enemigo"></article>';
-        this.x = x;
-        this.y = y;
-        this.ancho = ancho;
-        this.alto = alto;
-        this.speed = speed;
-        this.angulo = 0;
-    }
-
-    dibujar(){
-        document.write(this.etiqueta);
-    }
-
-    obtenerID(){
-        return document.getElementById(('enemy'+this.id));
-    }
-
-    actualizarPosicion(){
-        const enemigo = this.obtenerID();
-        enemigo.style.top = this.y + 'px';
-        enemigo.style.left = this.x + 'px';
-    }
-
-    moverse() {
-		this.x += this.speed * Math.cos(this.angulo);
-		this.y += this.speed * Math.sin(this.angulo);
-	}
-
-    getAnguloEntrePuntos(playerX, playerY){
-        this.angulo = Math.atan2(this.y-playerY, this.x-playerX);
-    }
-}
-
-
-
-
-
-
-
 /* -------------------------------------------------------------------------- */
 /*                                  CREACION                                  */
 /* -------------------------------------------------------------------------- */
+
+const jugador = new Player(40, 260 , 70, 80, 10);
 
 const arrayEnemigos = [];
 
@@ -310,13 +220,10 @@ for(let i=0; i<3; i++){
 for(const obstaculo of arrayObstacle){
     document.write(obstaculo.etiqueta);
 
-    const auto = document.getElementById(obstaculo.id);
+    const auto = document.querySelector(obstaculo.id);
     auto.style.top = obstaculo.y + 'px';
     auto.style.left = obstaculo.x + 'px';
 }
-
-const jugador = new Player(40, 260 , 70, 40, 10);
-document.addEventListener("keydown", movimiento);
 
 arrayEnemigos.forEach((elem) => {console.log(elem.etiqueta)});
 
@@ -338,3 +245,4 @@ desorden.sort((a, b) => a - b);
 console.log("ya no hay desorden");
 console.log(desorden);
 
+document.addEventListener("keydown", movimiento);
