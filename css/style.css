@@ -88,6 +88,8 @@ header nav ul li a:hover{
     scroll-margin-top: 60px;
     overflow: hidden;
 }
+
+
 #juego{
     background-color: #3c6875;
     border: solid 2px #A27B5C;
@@ -96,22 +98,6 @@ header nav ul li a:hover{
     height: 600px;
     position: relative;
     overflow: hidden;
-}
-
-/* JUGADOR */
-
-#player{
-    z-index: 1000;
-    position: absolute;
-    width: 70px;
-    height: 80px;
-    top: 260px;
-    left: 50px;
-    background-color: blue;
-}
-#player img{
-    width: 100%;
-    height: 100%;
 }
 
 /* FONDO */
@@ -130,132 +116,74 @@ header nav ul li a:hover{
     height: 100%;
 }
 
+/* JUGADOR */
+
+#player{
+    z-index: 1000;
+    position: absolute;
+    width: 70px;
+    height: 80px;
+    top: 260px;
+    left: 50px;
+    background-color: blue;
+}
+#player img{
+    width: 100%;
+    height: 100%;
+}
+#player h2{
+    width: 100%;
+    position: absolute;
+    color: #fff;
+    font-size: 15px;
+    text-align: end;
+}
+
+
 /* OBSTACULOS */
+.auto{
+    background-color: red;
+    position: absolute;
+    width: 250px;
+    height: 100px;
+}
+.auto img{
+    width: 100%;
+    height: 100%;
+}
 
 #auto{
+    background-color: red;
     position: absolute;
     width: 250px;
     height: 100px;
-    top: 170px;
-    left: 260px;
-    background-color: red;
-
-}
-#auto img{
-    width: 100%;
-    height: 100%;
-}
-#auto0{
-    position: absolute;
-    width: 250px;
-    height: 100px;
-    top: 0;
-    left: 0;
-    background-color: red;
-
-}
-#auto0 img{
-    width: 100%;
-    height: 100%;
-}
-#auto1{
-    position: absolute;
-    width: 250px;
-    height: 100px;
-    top: 0;
-    left: 0;
-    background-color: red;
-
-}
-#auto1 img{
-    width: 100%;
-    height: 100%;
-}
-#auto2{
-    position: absolute;
-    width: 250px;
-    height: 100px;
-    top: 0;
-    left: 0;
-    background-color: red;
-
-}
-#auto2 img{
-    width: 100%;
-    height: 100%;
+    top: 50%;
+    left: 37%;
 }
 
 /* ENEMIGO */
+.enemy{
+    z-index: 999;
+    position: absolute;
+    width: 70px;
+    height: 80px;
+    background-color: grey;
+}
+.enemy img{
+    width: 100%;
+    height: 100%;
+}
 #enemy{
     z-index: 999;
     position: absolute;
     width: 70px;
     height: 80px;
-    top: 260px;
-    left: 50px;
     background-color: grey;
+    top: 50%;
+    left: 50%;
+}
 
-}
-#enemy img{
-    width: 100%;
-    height: 100%;
-}
-#enemy0{
-    z-index: 999;
-    position: absolute;
-    width: 70px;
-    height: 80px;
-    top: 260px;
-    left: 50px;
-    background-color: grey;
 
-}
-#enemy0 img{
-    width: 100%;
-    height: 100%;
-}
-#enemy1{
-    z-index: 999;
-    position: absolute;
-    width: 70px;
-    height: 80px;
-    top: 260px;
-    left: 50px;
-    background-color: grey;
-
-}
-#enemy1 img{
-    width: 100%;
-    height: 100%;
-}
-#enemy2{
-    z-index: 999;
-    position: absolute;
-    width: 70px;
-    height: 80px;
-    top: 260px;
-    left: 50px;
-    background-color: grey;
-
-}
-#enemy2 img{
-    width: 100%;
-    height: 100%;
-}
-#enemy3{
-    z-index: 999;
-    position: absolute;
-    width: 70px;
-    height: 80px;
-    top: 260px;
-    left: 50px;
-    background-color: grey;
-
-}
-#enemy3 img{
-    width: 100%;
-    height: 100%;
-}
 
 
 /* -------------------------------------------------------------------------- */

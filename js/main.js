@@ -4,7 +4,7 @@
 
 class Player{
     constructor(x, y, ancho, alto, speed){
-        this.jugador = document.querySelector('#player');
+        this.nodo = document.querySelector('#player');
         this.x = x;
         this.y = y;
         this.ancho = ancho;
@@ -12,13 +12,16 @@ class Player{
         this.angulo = 0;
         this.speed = speed;
     }
-    
+    cambiarAngulo(angulo){
+        this.angulo = angulo;
+    }
 }
 
 class Enemy{
     constructor(id, x, y, ancho, alto, speed){
         this.id = id;
-        this.etiqueta = '<article id="enemy'+this.id+'"><img src="src/img/zombieIF.png" alt="enemigo"></article>';
+        this.claseEnemy= "enemy";
+        this.etiqueta = '<img src="src/img/zombieIF.png" alt="enemigo">';
         this.x = x;
         this.y = y;
         this.ancho = ancho;
@@ -28,7 +31,12 @@ class Enemy{
     }
 
     dibujar(){
-        document.write(this.etiqueta);
+        let nuevoEnemigo = document.createElement("article");
+        nuevoEnemigo.setAttribute("id", `enemy${this.id}`);
+        nuevoEnemigo.classList.add(this.claseEnemy);
+        nuevoEnemigo.innerHTML = this.etiqueta;
+
+        juego.appendChild(nuevoEnemigo);
     }
 
     obtenerID(){
@@ -42,8 +50,8 @@ class Enemy{
     }
 
     moverse() {
-		this.x += this.speed * Math.cos(this.angulo);
-		this.y += this.speed * Math.sin(this.angulo);
+		this.x -= this.speed * Math.cos(this.angulo);
+		this.y -= this.speed * Math.sin(this.angulo);
 	}
 
     getAnguloEntrePuntos(playerX, playerY){
@@ -53,13 +61,79 @@ class Enemy{
 
 class Obstaculo{
     constructor(id, x, y, ancho, alto){
-        this.id = '#auto' + id;
-        this.etiqueta= '<article id="auto' + id + '"><img src="src/img/auto.png" alt="auto"></article>';
+        this.id = id;
+        this.idQuery= `#auto${id}`;
+        this.obstClase = "auto";
+        this.etiqueta= `<img src="src/img/auto.png" alt="auto">`;
         this.x = x;
         this.y = y;
         this.ancho = ancho;
         this.alto = alto;
     }
+
+    dibujar(){
+        let cajaObst = document.createElement("article");
+        cajaObst.setAttribute("id", `auto${this.id}`);
+        cajaObst.classList.add("auto");
+        cajaObst.innerHTML = this.etiqueta;
+
+        juego.appendChild(cajaObst);
+    }
+
+    obtenerID(){
+        return document.querySelector(('#auto'+this.id));
+    }
+
+    actualizarPosicion(){
+        const obstaculo = this.obtenerID();
+        obstaculo.style.top = this.y + 'px';
+        obstaculo.style.left = this.x + 'px';
+    }
+}
+
+class Proyectil{
+    constructor(){
+        this.x = x;
+        this.y = y;
+        this.ancho = 10;
+        this.alto = 10;
+        this.angulo = 0;
+        this.etiqueta= '<img src="src/img/bala.png" alt="bala">';
+    }
+    dibujar(){
+        let cajaObst = document.createElement("article");
+        cajaObst.setAttribute("id", `auto${this.id}`);
+        cajaObst.classList.add("auto");
+        cajaObst.innerHTML = this.etiqueta;
+
+        juego.appendChild(cajaObst);
+    }
+
+    eliminar(){
+        let bala = document.querySelector('#bala');
+        bala.remove();
+    }
+
+    desplazar(){
+        this.x += this.speed * Math.cos(this.angulo);
+		this.y += this.speed * Math.sin(this.angulo);
+    }
+
+    nacerEnX(x){
+        this.x = x;
+    }
+
+    nacerEnY(y){
+        this.y = y;
+    }
+
+    darAngulo(angulo){
+        this.angulo = angulo;
+    }
+
+
+
+
 }
 
 /* -------------------------------------------------------------------------- */
@@ -74,55 +148,79 @@ class Obstaculo{
 function movimiento(event) {
     jugador.x= capturarX();
     jugador.y= capturarY();
+    
 
     arrayObstacle.forEach((el)=> {
-        noTraspasar(el)
+        noTraspasar(el);
+    });
+
+    arrayEnemigos.forEach((enemigo)=> {
+        enemigo.getAnguloEntrePuntos(jugador.x,jugador.y);
+        enemigo.moverse();
+        enemigo.actualizarPosicion();
+        if(estaDentro(enemigo)){
+            console.log("enemigo adentro");
+        }
     });
 
     if(event.key == 'w' && noAvanzarArriba(jugador.y)){
-        moverArriba(jugador.jugador ,jugador.y);
+        moverArriba();
     }
     if(event.key == 's' && noAvanzarAbajo(jugador.y)){
-        moverAbajo(jugador.jugador ,jugador.y);
+        moverAbajo();
     }
     if(event.key == 'a' && noAvanzarIzquierda(jugador.x)){
-        moverIzquierda(jugador.jugador ,jugador.x);
+        moverIzquierda();
     }
     if(event.key == 'd' && noAvanzarDerecha(jugador.x)){
-        moverDerecha(jugador.jugador ,jugador.x);
+        moverDerecha();
     }
 
     arrayObstacle.forEach((el)=> {
         noTraspasar(el)
     });
+    
 }
 
 function capturarX(){
-    let leftValor = window.getComputedStyle(jugador.jugador).getPropertyValue('left');
+    let leftValor = window.getComputedStyle(jugador.nodo).getPropertyValue('left');
     
     let x = parseInt(leftValor);
     console.log(x);
     return x;
 }
 function capturarY(){
-    let topValor = window.getComputedStyle(jugador.jugador).getPropertyValue('top');
+    let topValor = window.getComputedStyle(jugador.nodo).getPropertyValue('top');
     
     let y = parseInt(topValor);
     console.log(y);
     return y;
 }
 
-function moverArriba(player ,y){
-    player.style.top = y - 10 + "px";
+function moverArriba(){
+    const h2 = document.querySelector('#talk-pj');
+    h2.innerText = "w";
+    jugador.nodo.style.top = jugador.y - 10 + "px";
+    jugador.cambiarAngulo((pi/2));
 }
-function moverAbajo(player, y){
-    player.style.top = y + 10 + "px";
+function moverAbajo(){
+    const h2 = document.querySelector('#talk-pj');
+    h2.innerText = "s";
+    jugador.nodo.style.top = jugador.y + 10 + "px";
+    jugador.cambiarAngulo((3*pi/2));
+
 }
-function moverDerecha(player, x){
-    player.style.left = x + 10 + "px";
+function moverDerecha(){
+    const h2 = document.querySelector('#talk-pj');
+    h2.innerText = "d";
+    jugador.nodo.style.left = jugador.x + 10 + "px";
+    jugador.cambiarAngulo(0);
 }
-function moverIzquierda(player, x){
-    player.style.left = x - 10 + "px";
+function moverIzquierda(){
+    const h2 = document.querySelector('#talk-pj');
+    h2.innerText = "a";
+    jugador.nodo.style.left = jugador.x - 10 + "px";
+    jugador.cambiarAngulo(pi);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -160,25 +258,22 @@ function estaDentro(o){
 }
 
 
-function noTraspasar(e){
-    if (estaDentro(e)) {
-        console.log("toca");
-        if (jugador.x > e.x ) {
-            console.log("izq");
-            moverDerecha(jugador.jugador ,jugador.x);
+function noTraspasar(o){
+    if (estaDentro(o)) {
+        const h2 = document.querySelector('#talk-pj');
+        h2.innerText = "choque";
+        
+        if (jugador.x  > o.x && jugador.angulo == pi) {
+            moverDerecha();
         }
-        if (jugador.x < e.x) {
-            console.log("der");
-            moverIzquierda(jugador.jugador ,jugador.x);
+        if (jugador.x < o.x && jugador.angulo == 0) {
+            moverIzquierda();
         }
-        if (jugador.y < e.y) {
-            console.log("arriba");
-            moverArriba(jugador.jugador ,jugador.y);
+        if (jugador.y < o.y && jugador.angulo == (3*pi/2)) {
+            moverArriba();
         }
-        if (jugador.y > e.y) {
-            console.log("abajo");
-
-            moverAbajo(jugador.jugador ,jugador.y);
+        if (jugador.y > o.y && jugador.angulo == (pi/2)) {
+            moverAbajo();
         }
     }
 }
@@ -192,8 +287,13 @@ function getRandomArbitrary(min, max) {
 /* -------------------------------------------------------------------------- */
 /*                                  CREACION                                  */
 /* -------------------------------------------------------------------------- */
+/* JUGADOR */
+const pi = Math.PI;
 
 const jugador = new Player(40, 260 , 70, 80, 10);
+const juego = document.querySelector('#juego');
+
+/* ENEMIGOS */
 
 const arrayEnemigos = [];
 
@@ -210,6 +310,8 @@ for (const enemigo of arrayEnemigos) {
     enemigo.actualizarPosicion();
 }
 
+/* OBSTACULOS */
+
 const arrayObstacle = [];
 
 for(let i=0; i<3; i++){
@@ -218,31 +320,12 @@ for(let i=0; i<3; i++){
 }
 
 for(const obstaculo of arrayObstacle){
-    document.write(obstaculo.etiqueta);
-
-    const auto = document.querySelector(obstaculo.id);
-    auto.style.top = obstaculo.y + 'px';
-    auto.style.left = obstaculo.x + 'px';
+    console.log(obstaculo);
+    obstaculo.dibujar();
+    obstaculo.actualizarPosicion();
 }
 
-arrayEnemigos.forEach((elem) => {console.log(elem.etiqueta)});
-
-const iDES = arrayEnemigos.map((elem) => 'enemy'+ elem.id);
-console.log(iDES.join(', '));
-
-const resultado = arrayObstacle.some((el)=> el.x > jugador.x);
-console.log("se fija si hay algun obstaculo delante del jugador");
-console.log(resultado);
-
-const nuevoArrayObstacle = arrayObstacle.filter((el)=> el.x < jugador.x);
-console.log("devueve un nuevo array con los elementos que esten atras del jugador");
-console.log(nuevoArrayObstacle);
-
-const desorden = [20, 50 ,10, 4, 1, 8, 19];
-console.log(desorden);
-desorden.sort((a, b) => a - b);
-
-console.log("ya no hay desorden");
-console.log(desorden);
-
+/* event listener */
+console.log(jugador);
 document.addEventListener("keydown", movimiento);
+
