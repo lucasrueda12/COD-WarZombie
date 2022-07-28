@@ -92,48 +92,47 @@ class Obstaculo{
 }
 
 class Proyectil{
-    constructor(){
-        this.x = x;
-        this.y = y;
+    constructor(id, x, y, angulo){
+        this.id= id;
+        this.x= x;
+        this.y= y;
+        this.speed= 10;
         this.ancho = 10;
         this.alto = 10;
-        this.angulo = 0;
+        this.angulo= angulo;
         this.etiqueta= '<img src="src/img/bala.png" alt="bala">';
+        this.vivo = true;
     }
-    dibujar(){
-        let cajaObst = document.createElement("article");
-        cajaObst.setAttribute("id", `auto${this.id}`);
-        cajaObst.classList.add("auto");
-        cajaObst.innerHTML = this.etiqueta;
 
-        juego.appendChild(cajaObst);
+    dibujar(){
+        let disparo = document.createElement("article");
+        disparo.setAttribute("id", `bala${this.id}`);
+        disparo.classList.add("bala");
+        disparo.innerHTML = this.etiqueta;
+
+        juego.appendChild(disparo);
     }
 
     eliminar(){
-        let bala = document.querySelector('#bala');
+        let bala = document.querySelector('#bala'+this.id);
         bala.remove();
     }
+
 
     desplazar(){
         this.x += this.speed * Math.cos(this.angulo);
 		this.y += this.speed * Math.sin(this.angulo);
     }
-
-    nacerEnX(x){
-        this.x = x;
+    
+    obtenerID(){
+        return document.querySelector(('#bala'+this.id));
     }
 
-    nacerEnY(y){
-        this.y = y;
+    actualizarPosicion(){
+        const proyectil = this.obtenerID();
+        proyectil.style.top = this.y + 'px';
+        proyectil.style.left = this.x + 'px';
     }
-
-    darAngulo(angulo){
-        this.angulo = angulo;
-    }
-
-
-
-
 }
 
 /* -------------------------------------------------------------------------- */
@@ -163,6 +162,7 @@ function movimiento(event) {
         }
     });
 
+    /* mov */
     if(event.key == 'w' && noAvanzarArriba(jugador.y)){
         moverArriba();
     }
@@ -176,10 +176,37 @@ function movimiento(event) {
         moverDerecha();
     }
 
+    /* tiro */
+    if(event.key == 'j'){
+        let balax = capturarX() + parseInt(jugador.ancho)/2;
+        let balay = capturarY() + parseInt(jugador.alto)/2;
+        const bullet = new Proyectil(cantDisparos, balax, balay, jugador.angulo);
+        cantDisparos++;
+        const cartel = document.querySelector('.cartel h2');
+        cartel.innerText = "Disparos: "+ cantDisparos + "";
+
+        bullet.dibujar();
+        bullet.actualizarPosicion();
+        arrayDisparos.push(bullet);
+    }
+    arrayDisparos.forEach((tiro)=>{
+        tiro.desplazar();
+        tiro.actualizarPosicion();
+        if(escapoEntorno(tiro)){
+            tiro.eliminar();
+            tiro.vivo = false;
+        }
+    });
+
+    for(let i=0;i<arrayDisparos.length; i++){
+        if(arrayDisparos[i].vivo == false){
+            arrayDisparos.splice(i,1);
+        }
+    }
+
     arrayObstacle.forEach((el)=> {
         noTraspasar(el)
     });
-    
 }
 
 function capturarX(){
@@ -257,6 +284,14 @@ function estaDentro(o){
     && jugador.y < o.y+o.alto && jugador.y+jugador.alto > o.y);
 }
 
+function choqueObjtos(ob1, ob2){
+    return (ob1.x < ob2.x+ob2.ancho  && ob1.x+ob1.ancho > ob2.x
+        && ob1.y < ob2.y+ob2.alto && ob1.y+ob1.alto > ob2.y);
+}
+function escapoEntorno(obj){
+    return (obj.x < 0 || obj.x>1000 || obj.y < 0 || obj.y>600);
+}
+
 
 function noTraspasar(o){
     if (estaDentro(o)) {
@@ -289,9 +324,15 @@ function getRandomArbitrary(min, max) {
 /* -------------------------------------------------------------------------- */
 /* JUGADOR */
 const pi = Math.PI;
+let cantDisparos = 0;
 
 const jugador = new Player(40, 260 , 70, 80, 10);
 const juego = document.querySelector('#juego');
+
+/* PROYECTIL */
+
+const arrayDisparos = [];
+
 
 /* ENEMIGOS */
 
