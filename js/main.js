@@ -2,6 +2,10 @@
 /*                                   CLASES                                   */
 /* -------------------------------------------------------------------------- */
 
+/* -------------------------------------------------------------------------- */
+/*                                   JUGADOR                                  */
+/* -------------------------------------------------------------------------- */
+
 class Player{
     constructor(x, y, ancho, alto, speed){
         this.nodo = document.querySelector('#player');
@@ -17,6 +21,10 @@ class Player{
     }
 }
 
+/* -------------------------------------------------------------------------- */
+/*                                   ENEMIGO                                  */
+/* -------------------------------------------------------------------------- */
+
 class Enemy{
     constructor(id, x, y, ancho, alto, speed){
         this.id = id;
@@ -28,6 +36,7 @@ class Enemy{
         this.alto = alto;
         this.speed = speed;
         this.angulo = 0;
+        this.vivo = true;
     }
 
     dibujar(){
@@ -37,6 +46,11 @@ class Enemy{
         nuevoEnemigo.innerHTML = this.etiqueta;
 
         juego.appendChild(nuevoEnemigo);
+    }
+
+    eliminar(){
+        let ene = document.querySelector('#enemy'+this.id);
+        ene.remove();
     }
 
     obtenerID(){
@@ -50,14 +64,18 @@ class Enemy{
     }
 
     moverse() {
-		this.x -= this.speed * Math.cos(this.angulo);
-		this.y -= this.speed * Math.sin(this.angulo);
-	}
+        this.x -= this.speed * Math.cos(this.angulo);
+        this.y -= this.speed * Math.sin(this.angulo);
+    }
 
     getAnguloEntrePuntos(playerX, playerY){
         this.angulo = Math.atan2(this.y-playerY, this.x-playerX);
     }
 }
+
+/* -------------------------------------------------------------------------- */
+/*                                 OBSTACULOS                                 */
+/* -------------------------------------------------------------------------- */
 
 class Obstaculo{
     constructor(id, x, y, ancho, alto){
@@ -89,7 +107,16 @@ class Obstaculo{
         obstaculo.style.top = this.y + 'px';
         obstaculo.style.left = this.x + 'px';
     }
+
+    cambiarPosicion(){
+        this.x = Math.round(getRandomArbitrary(400, 1170));
+        this.y = Math.round(getRandomArbitrary(140, 380));
+    }
 }
+
+/* -------------------------------------------------------------------------- */
+/*                                  PROYECTIL                                 */
+/* -------------------------------------------------------------------------- */
 
 class Proyectil{
     constructor(id, x, y, angulo){
@@ -121,7 +148,7 @@ class Proyectil{
 
     desplazar(){
         this.x += this.speed * Math.cos(this.angulo);
-		this.y += this.speed * Math.sin(this.angulo);
+        this.y += this.speed * Math.sin(this.angulo);
     }
     
     obtenerID(){
@@ -135,6 +162,7 @@ class Proyectil{
     }
 }
 
+
 /* -------------------------------------------------------------------------- */
 /*                                  FUNCIONES                                 */
 /* -------------------------------------------------------------------------- */
@@ -142,6 +170,10 @@ class Proyectil{
 
 /* -------------------------------------------------------------------------- */
 /*                                 MOVIMIENTOS                                */
+/* -------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------- */
+/*                              TECLAS Y ACCIONES                             */
 /* -------------------------------------------------------------------------- */
 
 function movimiento(event) {
@@ -190,17 +222,45 @@ function movimiento(event) {
         arrayDisparos.push(bullet);
     }
     arrayDisparos.forEach((tiro)=>{
-        tiro.desplazar();
-        tiro.actualizarPosicion();
-        if(escapoEntorno(tiro)){
-            tiro.eliminar();
-            tiro.vivo = false;
+        while(tiro.vivo){
+            tiro.desplazar();
+            tiro.actualizarPosicion();
+            if(escapoEntorno(tiro)){
+                tiro.eliminar();
+                tiro.vivo = false;
+                console.log("me escape del entorno");
+            }
+            if(tiro.vivo){
+                for(const enemigo of arrayEnemigos){
+                    if(choqueObjtos(tiro, enemigo)){
+                        tiro.eliminar();
+                        tiro.vivo = false;
+                        enemigo.eliminar();
+                        enemigo.vivo = false;
+                        console.log("mate un zombie");
+                    }
+                }
+            }
+            if(tiro.vivo){
+                for(const obst of arrayObstacle){
+                    if(choqueObjtos(tiro, obst)){
+                        tiro.eliminar();
+                        tiro.vivo = false;
+                        console.log("choque un auto");
+                    }
+                }
+            }
         }
     });
 
     for(let i=0;i<arrayDisparos.length; i++){
         if(arrayDisparos[i].vivo == false){
             arrayDisparos.splice(i,1);
+        }
+    }
+    for(let i=0; i<arrayEnemigos.length; i++){
+        if(arrayEnemigos[i].vivo == false){
+            arrayEnemigos.splice(i,1);
         }
     }
 
@@ -279,15 +339,19 @@ function noAvanzarDerecha(x){
     return true;
 }
 
+// JUGADOR TOCANDO UN OBJETO
 function estaDentro(o){
     return (jugador.x < o.x+o.ancho  && jugador.x+jugador.ancho > o.x
     && jugador.y < o.y+o.alto && jugador.y+jugador.alto > o.y);
 }
 
+// CHOQUE DE OBJETOS
 function choqueObjtos(ob1, ob2){
-    return (ob1.x < ob2.x+ob2.ancho  && ob1.x+ob1.ancho > ob2.x
-        && ob1.y < ob2.y+ob2.alto && ob1.y+ob1.alto > ob2.y);
+    return (ob1.x < ob2.x + ob2.ancho  && ob1.x + ob1.ancho > ob2.x
+        && ob1.y < ob2.y + ob2.alto && ob1.y + ob1.alto > ob2.y);
 }
+
+// SE ESCAPO DEL ENTORNO
 function escapoEntorno(obj){
     return (obj.x < 0 || obj.x>1000 || obj.y < 0 || obj.y>600);
 }
@@ -318,6 +382,51 @@ function getRandomArbitrary(min, max) {
     return Math.random() * (max - min) + min;
 }
 
+/* -------------------------------------------------------------------------- */
+/*                                   GENERAR                                  */
+/* -------------------------------------------------------------------------- */
+
+function cargarEnemigos(){
+    for(let i=0; i<3; i++){
+        let enemigo = new Enemy(i, Math.round(getRandomArbitrary(300, 1170)), Math.round(getRandomArbitrary(140, 370)), 70, 80, 10);
+        arrayEnemigos.push(enemigo);
+    }
+}
+function dibujarEnemigos(){
+    for (const enemigo of arrayEnemigos) {
+        console.log(enemigo);
+        enemigo.dibujar();
+        enemigo.actualizarPosicion();
+    }
+}
+
+function cargarObstaculos(){
+    for(let i=0; i<3; i++){
+        const obstaculo = new Obstaculo(i, Math.round(getRandomArbitrary(400, 1170)), Math.round(getRandomArbitrary(140, 400)), 250, 100);
+        arrayObstacle.push(obstaculo);
+    }
+}
+function dibujarObstaculos(){
+    for(const obstaculo of arrayObstacle){
+        console.log(obstaculo);
+        obstaculo.dibujar();
+        obstaculo.actualizarPosicion();
+        for(const otroObst of arrayObstacle){
+            if(obstaculo.id != otroObst.id){
+                let toca = true;
+                while(toca){
+                    if(choqueObjtos(obstaculo, otroObst)){
+                        console.log("se tocan");
+                        obstaculo.cambiarPosicion();
+                        obstaculo.actualizarPosicion();
+                    }else{
+                        toca = false;
+                    }
+                }
+            }
+        }
+    }
+}
 
 /* -------------------------------------------------------------------------- */
 /*                                  CREACION                                  */
@@ -338,33 +447,16 @@ const arrayDisparos = [];
 
 const arrayEnemigos = [];
 
-for(let i=0; i<3; i++){
-    let rx = Math.round(getRandomArbitrary(50, 1170));
-    let ry = Math.round(getRandomArbitrary(140, 370));
-    let enemigo = new Enemy(i, rx, ry, 117, 183, 10);
-    arrayEnemigos.push(enemigo);
-}
+cargarEnemigos();
+dibujarEnemigos();
 
-for (const enemigo of arrayEnemigos) {
-    console.log(enemigo);
-    enemigo.dibujar();
-    enemigo.actualizarPosicion();
-}
 
 /* OBSTACULOS */
 
 const arrayObstacle = [];
 
-for(let i=0; i<3; i++){
-    const obstaculo = new Obstaculo(i, Math.round(getRandomArbitrary(400, 1000)), Math.round(getRandomArbitrary(140, 380)), 250, 100);
-    arrayObstacle.push(obstaculo);
-}
-
-for(const obstaculo of arrayObstacle){
-    console.log(obstaculo);
-    obstaculo.dibujar();
-    obstaculo.actualizarPosicion();
-}
+cargarObstaculos();
+dibujarObstaculos();
 
 /* event listener */
 console.log(jugador);
