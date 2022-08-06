@@ -124,16 +124,21 @@ header nav ul li a:hover{
     width: 70px;
     height: 80px;
     top: 260px;
-    left: 50px;
-    background-color: blue;
+    left: 80px;
+    /* background-color: blue; */
 }
 #player img{
     width: 100%;
     height: 100%;
 }
 #player h2{
-    width: 100%;
+    width: auto;
+    padding: 10px;
     position: absolute;
+    border-radius: 5px;
+    background-color: rgba(128, 128, 128, 0.658);
+    left: 50px;
+    top: -20px;
     color: #fff;
     font-size: 15px;
     text-align: end;
@@ -142,7 +147,7 @@ header nav ul li a:hover{
 
 /* OBSTACULOS */
 .auto{
-    background-color: red;
+    /* background-color: red; */
     position: absolute;
     width: 250px;
     height: 100px;
@@ -153,7 +158,7 @@ header nav ul li a:hover{
 }
 
 #auto{
-    background-color: red;
+    /* background-color: red; */
     position: absolute;
     width: 250px;
     height: 100px;
@@ -167,7 +172,7 @@ header nav ul li a:hover{
     position: absolute;
     width: 70px;
     height: 80px;
-    background-color: grey;
+    /* background-color: grey; */
 }
 .enemy img{
     width: 100%;
@@ -178,7 +183,7 @@ header nav ul li a:hover{
     position: absolute;
     width: 70px;
     height: 80px;
-    background-color: grey;
+    /* background-color: grey; */
     top: 50%;
     left: 50%;
 }
@@ -190,7 +195,7 @@ header nav ul li a:hover{
     z-index: 20;
     width: 10px;
     height: 10px;
-    background-color: yellowgreen;
+    /* background-color: yellowgreen; */
     object-fit: cover;
 }
 .bala img{
