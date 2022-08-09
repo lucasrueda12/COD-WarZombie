@@ -1,4 +1,12 @@
 /* -------------------------------------------------------------------------- */
+/*                                LOCAL STORAGE                               */
+/* -------------------------------------------------------------------------- */
+
+let record = localStorage.getItem('record') ?? 0;
+const juego = document.querySelector('#juego');
+
+
+/* -------------------------------------------------------------------------- */
 /*                                   CLASES                                   */
 /* -------------------------------------------------------------------------- */
 
@@ -204,113 +212,146 @@ class Proyectil{
 /* -------------------------------------------------------------------------- */
 
 function movimiento(event) {
-    jugador.x= capturarX();
-    jugador.y= capturarY();
-    console.log(jugador.x, jugador.y);
+    if(!gamePause && !gameOver && !gameWin){
+        jugador.x= capturarX();
+        jugador.y= capturarY();
+        console.log(jugador.x, jugador.y);
 
-    arrayObstacle.forEach((el)=> {
-        noTraspasar(el);
-    });
+        arrayObstacle.forEach((el)=> {
+            noTraspasar(el);
+        });
 
-    nuevosEnemigos();
+        nuevosEnemigos();
 
 
-    arrayEnemigos.forEach((enemigo)=> {
-        if (enemigo.vivo == true){
-            enemigo.getAnguloEntrePuntos(jugador);
-            enemigo.moverse();
-            enemigo.actualizarPosicion();
-            for(const obst of arrayObstacle){
-                if(choqueObjtos(enemigo, obst)){
-                    console.log("se tocan");
-                    enemigo.getAnguloEntrePuntos(obst);
-                    enemigo.salirObjeto();
-                    enemigo.actualizarPosicion();
-                }
-            }
-        }
-    });
-
-    /* mov */
-    if(event.key == 'w' && noAvanzarArriba(jugador.y)){
-        moverArriba();
-    }
-    if(event.key == 's' && noAvanzarAbajo(jugador.y)){
-        moverAbajo();
-    }
-    if(event.key == 'a' && noAvanzarIzquierda(jugador.x)){
-        moverIzquierda();
-        moverMapaIzquierda();
-    }
-    if(event.key == 'd' && noAvanzarDerecha(jugador.x)){
-        moverDerecha();
-        moverMapaDerecha();
-    }
-
-    /* tiro */
-    if(event.key == 'j'){
-        let balax = capturarX() + parseInt(jugador.ancho)/2;
-        let balay = capturarY() + parseInt(jugador.alto)/2;
-        const bullet = new Proyectil(cantDisparos, balax, balay, jugador.angulo);
-        cantDisparos++;
-        
-        bullet.dibujar();
-        bullet.actualizarPosicion();
-        arrayDisparos.push(bullet);
-    }
-    arrayDisparos.forEach((tiro)=>{
-        while(tiro.vivo){
-            tiro.desplazar();
-            tiro.actualizarPosicion();
-            if(escapoEntorno(tiro)){
-                tiro.eliminar();
-                tiro.vivo = false;
-                console.log("me escape del entorno");
-            }
-            if(tiro.vivo){
-                for(const enemigo of arrayEnemigos){
-                    if(choqueObjtos(tiro, enemigo)){
-                        tiro.eliminar();
-                        tiro.vivo = false;
-                        enemigo.eliminar();
-                        enemigo.vivo = false;
-                        
-                        const h2 = document.querySelector('#talk-pj');
-                        h2.innerText = "mate un zombie";
-
-                        kills++;
-                        const cartel = document.querySelector('.cartel h2');
-                        cartel.innerText = "kills: "+ kills + "";
-                        
-                    }
-                }
-            }
-            if(tiro.vivo){
+        arrayEnemigos.forEach((enemigo)=> {
+            if (enemigo.vivo == true){
+                enemigo.getAnguloEntrePuntos(jugador);
+                enemigo.moverse();
+                enemigo.actualizarPosicion();
                 for(const obst of arrayObstacle){
-                    if(choqueObjtos(tiro, obst)){
-                        tiro.eliminar();
-                        tiro.vivo = false;
-                        console.log("choque un auto");
+                    if(choqueObjtos(enemigo, obst)){
+                        console.log("se tocan");
+                        enemigo.getAnguloEntrePuntos(obst);
+                        enemigo.salirObjeto();
+                        enemigo.actualizarPosicion();
                     }
                 }
             }
-        }
-    });
+        });
 
-    for(let i=0;i<arrayDisparos.length; i++){
-        if(arrayDisparos[i].vivo == false){
-            arrayDisparos.splice(i,1);
+        /* mov */
+        if(event.key == 'w' && noAvanzarArriba(jugador.y)){
+            moverArriba();
         }
+        if(event.key == 's' && noAvanzarAbajo(jugador.y)){
+            moverAbajo();
+        }
+        if(event.key == 'a' && noAvanzarIzquierda(jugador.x)){
+            moverIzquierda();
+            moverMapaIzquierda();
+        }
+        if(event.key == 'd' && noAvanzarDerecha(jugador.x)){
+            moverDerecha();
+            moverMapaDerecha();
+        }
+
+        /* tiro */
+        if(event.key == 'j'){
+            let balax = capturarX() + parseInt(jugador.ancho)/2;
+            let balay = capturarY() + parseInt(jugador.alto)/2;
+            const bullet = new Proyectil(cantDisparos, balax, balay, jugador.angulo);
+            cantDisparos++;
+            
+            bullet.dibujar();
+            bullet.actualizarPosicion();
+            arrayDisparos.push(bullet);
+        }
+        
+        
+        arrayDisparos.forEach((tiro)=>{
+            while(tiro.vivo){
+                tiro.desplazar();
+                tiro.actualizarPosicion();
+                if(escapoEntorno(tiro)){
+                    tiro.eliminar();
+                    tiro.vivo = false;
+                    console.log("me escape del entorno");
+                }
+                if(tiro.vivo){
+                    for(const enemigo of arrayEnemigos){
+                        if(choqueObjtos(tiro, enemigo)){
+                            tiro.eliminar();
+                            tiro.vivo = false;
+                            enemigo.eliminar();
+                            enemigo.vivo = false;
+                            
+                            const h2 = document.querySelector('#talk-pj');
+                            h2.innerText = "mate un zombie";
+
+                            kills++;
+                            const cartel = document.querySelector('.cartel h2');
+                            cartel.innerText = "Record: "+ record +" | kills: "+ kills;
+                            if(kills >= record){
+                                localStorage.setItem('record', kills);
+                            }
+                            record = localStorage.getItem('record') ?? 0;
+                            cartel.innerText = "Record: "+ record +" | kills: "+ kills;
+                        }
+                    }
+                }
+                if(tiro.vivo){
+                    for(const obst of arrayObstacle){
+                        if(choqueObjtos(tiro, obst)){
+                            tiro.eliminar();
+                            tiro.vivo = false;
+                            console.log("choque un auto");
+                        }
+                    }
+                }
+            }
+        });
+
+        for(let i=0;i<arrayDisparos.length; i++){
+            if(arrayDisparos[i].vivo == false){
+                arrayDisparos.splice(i,1);
+            }
+        }
+        for(let i=0; i<arrayEnemigos.length; i++){
+            if(arrayEnemigos[i].vivo == false){
+                arrayEnemigos.splice(i,1);
+            }
+        }
+
+        arrayObstacle.forEach((el)=> {
+            noTraspasar(el)
+        });
     }
-    for(let i=0; i<arrayEnemigos.length; i++){
-        if(arrayEnemigos[i].vivo == false){
-            arrayEnemigos.splice(i,1);
-        }
+    /* PAUSA */
+    if(event.key == 'p'){
+        gamePause = !gamePause;
     }
 
-    arrayObstacle.forEach((el)=> {
-        noTraspasar(el)
-    });
+    mostrarPausa();
+}
+
+function onPausaClick(){
+    gamePause = !gamePause;
+}
+
+function mostrarPausa(){
+    if(!gameOver && gamePause && (document.querySelector('#pausa') == null)){
+        const cartelPausa = document.createElement('article');
+        cartelPausa.setAttribute("id", 'pausa');
+        cartelPausa.setAttribute("onclick", 'onPausaClick()');
+        cartelPausa.classList.add("pausaGame");
+        cartelPausa.innerHTML = '<img src="src/img/pausa.png" alt="pausa">';
+
+        juego.appendChild(cartelPausa);
+    }else if((gamePause == false) && (document.querySelector('#pausa') != null)){
+        let cartelPausa = document.querySelector('#pausa');
+        cartelPausa.remove();
+    }
 }
 
 function capturarX(){
@@ -510,6 +551,54 @@ function dibujarObstaculos(){
 /*                                  CREACION                                  */
 /* -------------------------------------------------------------------------- */
 
+function onJugarClick(){
+    const menu = document.querySelector('#menu');
+    menu.style.display = 'none';
+    gamePause = false;
+    gameOver = false;
+}
+
+function generarMenu(){
+    const menu = document.createElement('article');
+    const jugar = document.createElement('div');
+    const niveles = document.createElement('div');
+    const opciones = document.createElement('div');
+    
+    menu.setAttribute("id", 'menu');
+    menu.classList.add("menu");
+    
+    jugar.setAttribute("id", 'jugar');
+    jugar.classList.add("jugar");
+    jugar.setAttribute("onclick", 'onJugarClick()');
+    jugar.innerHTML = '<img src="src/img/jugar.png" alt="pausa">'
+    
+    niveles.setAttribute("id", 'niveles');
+    niveles.classList.add("niveles");
+    niveles.setAttribute("onclick", 'onNivelesClick()');
+    niveles.innerHTML = '<img src="src/img/niveles.png" alt="pausa">'
+    
+    
+    opciones.setAttribute("id", 'opciones');
+    opciones.classList.add("opciones");
+    opciones.setAttribute("onclick", 'onOpcionesClick()');
+    opciones.innerHTML = '<img src="src/img/opciones.png" alt="pausa">'
+    
+    menu.innerHTML = '<h2>COD WarZombie</h2>'
+    menu.appendChild(jugar);
+    menu.appendChild(niveles);
+    menu.appendChild(opciones);
+    
+    juego.appendChild(menu);
+}
+/* MENU */
+
+generarMenu();
+
+/* Estado del juego */
+let gamePause = true;
+let gameOver = true;
+let gameWin = false;
+
 /* MAPA */
 const mapaDelJuego = new MapaJuego();
 
@@ -517,8 +606,11 @@ const mapaDelJuego = new MapaJuego();
 const pi = Math.PI;
 let cantDisparos = 0;
 let kills =0;
+
+const cartel = document.querySelector('.cartel h2');
+cartel.innerText = "Record: "+ record +" | kills: "+ kills;
+
 const jugador = new Player(40, 260 , 70, 80, 10);
-const juego = document.querySelector('#juego');
 
 /* PROYECTIL */
 
@@ -543,6 +635,10 @@ dibujarObstaculos();
 /* event listener */
 console.log(jugador);
 
+
 document.addEventListener("keydown", movimiento);
+
+
+
 
 /* setInterval(); */
