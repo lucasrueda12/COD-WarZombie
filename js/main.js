@@ -3,6 +3,8 @@
 /* -------------------------------------------------------------------------- */
 
 let record = localStorage.getItem('record') ?? 0;
+
+/* subi la variable juego para que no tenga conflictos con funciones y variables */
 const juego = document.querySelector('#juego');
 
 
@@ -96,8 +98,8 @@ class Enemy{
         this.y += this.speed * Math.sin(this.angulo);
     }
 
-    getAnguloEntrePuntos(objet){
-        this.angulo = Math.atan2(this.y-objet.y, this.x-objet.x);
+    getAnguloEntrePuntos({x, y}){
+        this.angulo = Math.atan2(this.y-y, this.x-x);
     }
 }
 
@@ -223,7 +225,6 @@ function movimiento(event) {
 
         nuevosEnemigos();
 
-
         arrayEnemigos.forEach((enemigo)=> {
             if (enemigo.vivo == true){
                 enemigo.getAnguloEntrePuntos(jugador);
@@ -257,26 +258,38 @@ function movimiento(event) {
         }
 
         /* tiro */
-        if(event.key == 'j'){
-            let balax = capturarX() + parseInt(jugador.ancho)/2;
-            let balay = capturarY() + parseInt(jugador.alto)/2;
-            const bullet = new Proyectil(cantDisparos, balax, balay, jugador.angulo);
-            cantDisparos++;
-            
-            bullet.dibujar();
-            bullet.actualizarPosicion();
-            arrayDisparos.push(bullet);
+        if(balas>0){
+            if(event.key == 'j'){
+                balas--;
+                const h2 = document.querySelector('#talk-pj');
+                h2.innerText = "me quedan" + balas;
+
+                let balax = capturarX() + parseInt(jugador.ancho)/2;
+                let balay = capturarY() + parseInt(jugador.alto)/2;
+                const bullet = new Proyectil(cantDisparos, balax, balay, jugador.angulo);
+                cantDisparos++;
+                
+                bullet.dibujar();
+                bullet.actualizarPosicion();
+                arrayDisparos.push(bullet);
+            }
+        }else{
+            const h2 = document.querySelector('#talk-pj');
+            h2.innerText = "debo recargar";
         }
-        
+        if(balas<30){
+            event.key == 'r' && (balas =30);
+        }
         
         arrayDisparos.forEach((tiro)=>{
             while(tiro.vivo){
                 tiro.desplazar();
                 tiro.actualizarPosicion();
-                if(escapoEntorno(tiro)){
+                if(escapoRango(tiro)){
                     tiro.eliminar();
                     tiro.vivo = false;
-                    console.log("me escape del entorno");
+                    const h2 = document.querySelector('#talk-pj');
+                    h2.innerText = "fue un tiro de advertencia";
                 }
                 if(tiro.vivo){
                     for(const enemigo of arrayEnemigos){
@@ -292,9 +305,9 @@ function movimiento(event) {
                             kills++;
                             const cartel = document.querySelector('.cartel h2');
                             cartel.innerText = "Record: "+ record +" | kills: "+ kills;
-                            if(kills >= record){
-                                localStorage.setItem('record', kills);
-                            }
+
+                            kills >= record && localStorage.setItem('record', kills);
+                            
                             record = localStorage.getItem('record') ?? 0;
                             cartel.innerText = "Record: "+ record +" | kills: "+ kills;
                         }
@@ -305,7 +318,8 @@ function movimiento(event) {
                         if(choqueObjtos(tiro, obst)){
                             tiro.eliminar();
                             tiro.vivo = false;
-                            console.log("choque un auto");
+                            const h2 = document.querySelector('#talk-pj');
+                            h2.innerText = "malditos autos";
                         }
                     }
                 }
@@ -313,14 +327,10 @@ function movimiento(event) {
         });
 
         for(let i=0;i<arrayDisparos.length; i++){
-            if(arrayDisparos[i].vivo == false){
-                arrayDisparos.splice(i,1);
-            }
+            arrayDisparos[i].vivo == false && arrayDisparos.splice(i,1);
         }
         for(let i=0; i<arrayEnemigos.length; i++){
-            if(arrayEnemigos[i].vivo == false){
-                arrayEnemigos.splice(i,1);
-            }
+            arrayEnemigos[i].vivo == false && arrayEnemigos.splice(i,1);
         }
 
         arrayObstacle.forEach((el)=> {
@@ -328,9 +338,7 @@ function movimiento(event) {
         });
     }
     /* PAUSA */
-    if(event.key == 'p'){
-        gamePause = !gamePause;
-    }
+    event.key == 'p' && (gamePause = !gamePause);
 
     mostrarPausa();
 }
@@ -370,27 +378,24 @@ function capturarY(){
 }
 
 function moverArriba(){
-    const h2 = document.querySelector('#talk-pj');
-    h2.innerText = "w";
     jugador.nodo.style.top = jugador.y - jugador.speed + "px";
     jugador.cambiarAngulo((pi/2));
 }
 function moverAbajo(){
-    const h2 = document.querySelector('#talk-pj');
-    h2.innerText = "s";
+    
     jugador.nodo.style.top = jugador.y + jugador.speed + "px";
     jugador.cambiarAngulo((3*pi/2));
 
 }
 function moverDerecha(){
     const h2 = document.querySelector('#talk-pj');
-    h2.innerText = "d";
+    h2.innerText = "avancemos!";
     jugador.nodo.style.left = jugador.x + jugador.speed + "px";
     jugador.cambiarAngulo(0);
 }
 function moverIzquierda(){
     const h2 = document.querySelector('#talk-pj');
-    h2.innerText = "a";
+    h2.innerText = "retrocedan!";
     jugador.nodo.style.left = jugador.x - jugador.speed + "px";
     jugador.cambiarAngulo(pi);
 }
@@ -425,34 +430,22 @@ function moverMapaDerecha(){
 /* -------------------------------------------------------------------------- */
 
 function noAvanzarArriba(y){
-    if (y<=110){
-        return false;
-    }
-    return true;
+    return (y<=110)? false : true;
 }
 function noAvanzarAbajo(y){
-    if (y>=420){
-        return false;
-    }
-    return true;
+    return y>=420? false : true;
 }
 function noAvanzarIzquierda(x){
-    if (x<=5){
-        return false;
-    }
-    return true;
+    return x<=5? false : true;
 }
 function noAvanzarDerecha(x){
-    if (x>=1960){
-        return false;
-    }
-    return true;
+    return x>=1960? false : true;
 }
 
 // JUGADOR TOCANDO UN OBJETO
-function estaDentro(o){
-    return (jugador.x < o.x+o.ancho  && jugador.x+jugador.ancho > o.x
-    && jugador.y < o.y+o.alto && jugador.y+jugador.alto > o.y);
+function estaDentro({x, y, ancho, alto}){
+    return (jugador.x < x+ancho  && jugador.x+jugador.ancho > x
+    && jugador.y < y+alto && jugador.y+jugador.alto > y);
 }
 
 // CHOQUE DE OBJETOS
@@ -462,26 +455,26 @@ function choqueObjtos(ob1, ob2){
 }
 
 // SE ESCAPO DEL ENTORNO
-function escapoEntorno(obj){
-    return (obj.x < 0 || obj.x>1980 || obj.y < 0 || obj.y>600);
+function escapoRango({x, y}){
+    return (x < jugador.x-600 || x> jugador.x+600 || y < jugador.y-600 || y> jugador.y +600);
 }
 
 
-function noTraspasar(o){
-    if (estaDentro(o)) {
+function noTraspasar({x, y, ancho, alto}){
+    if (estaDentro({x, y, ancho, alto})) {
         const h2 = document.querySelector('#talk-pj');
         h2.innerText = "choque";
         
-        if (jugador.x  > o.x && jugador.angulo == pi) {
+        if (jugador.x  > x && jugador.angulo == pi) {
             moverDerecha();
         }
-        if (jugador.x < o.x && jugador.angulo == 0) {
+        if (jugador.x < x && jugador.angulo == 0) {
             moverIzquierda();
         }
-        if (jugador.y < o.y && jugador.angulo == (3*pi/2)) {
+        if (jugador.y < y && jugador.angulo == (3*pi/2)) {
             moverArriba();
         }
-        if (jugador.y > o.y && jugador.angulo == (pi/2)) {
+        if (jugador.y > y && jugador.angulo == (pi/2)) {
             moverAbajo();
         }
     }
@@ -606,6 +599,8 @@ const mapaDelJuego = new MapaJuego();
 const pi = Math.PI;
 let cantDisparos = 0;
 let kills =0;
+let balas =30;
+
 
 const cartel = document.querySelector('.cartel h2');
 cartel.innerText = "Record: "+ record +" | kills: "+ kills;
