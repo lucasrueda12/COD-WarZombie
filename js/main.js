@@ -338,6 +338,8 @@ function movimiento(event) {
         });
     }
     /* PAUSA */
+
+    /* AND */
     event.key == 'p' && (gamePause = !gamePause);
 
     mostrarPausa();
@@ -429,6 +431,8 @@ function moverMapaDerecha(){
 /*                                 COLISIONES                                 */
 /* -------------------------------------------------------------------------- */
 
+
+/* if ternarios */
 function noAvanzarArriba(y){
     return (y<=110)? false : true;
 }
@@ -441,6 +445,10 @@ function noAvanzarIzquierda(x){
 function noAvanzarDerecha(x){
     return x>=1960? false : true;
 }
+
+
+/* DESESTRUCTURACION */
+
 
 // JUGADOR TOCANDO UN OBJETO
 function estaDentro({x, y, ancho, alto}){
