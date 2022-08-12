@@ -43,6 +43,12 @@ class Player{
     cambiarAngulo(angulo){
         this.angulo = angulo;
     }
+
+    iniciar(){
+        let jugador = this.nodo
+        jugador.style.top = this.y + 'px';
+        jugador.style.left = this.x + 'px';
+    }
 }
 
 /* -------------------------------------------------------------------------- */
@@ -126,6 +132,10 @@ class Obstaculo{
         cajaObst.innerHTML = this.etiqueta;
 
         juego.appendChild(cajaObst);
+    }
+    eliminar(){
+        let obstaculo = document.querySelector(this.idQuery);
+        obstaculo.remove();
     }
 
     obtenerID(){
@@ -217,7 +227,6 @@ function movimiento(event) {
     if(!gamePause && !gameOver && !gameWin){
         jugador.x= capturarX();
         jugador.y= capturarY();
-        console.log(jugador.x, jugador.y);
 
         arrayObstacle.forEach((el)=> {
             noTraspasar(el);
@@ -232,7 +241,6 @@ function movimiento(event) {
                 enemigo.actualizarPosicion();
                 for(const obst of arrayObstacle){
                     if(choqueObjtos(enemigo, obst)){
-                        console.log("se tocan");
                         enemigo.getAnguloEntrePuntos(obst);
                         enemigo.salirObjeto();
                         enemigo.actualizarPosicion();
@@ -336,6 +344,10 @@ function movimiento(event) {
         arrayObstacle.forEach((el)=> {
             noTraspasar(el)
         });
+
+        arrayEnemigos.forEach((enemigo)=>{
+            estaDentro(enemigo) && matarPJ();
+        })
     }
     /* PAUSA */
 
@@ -368,14 +380,12 @@ function capturarX(){
     let leftValor = window.getComputedStyle(jugador.nodo).getPropertyValue('left');
     
     let x = parseInt(leftValor);
-    console.log(x);
     return x;
 }
 function capturarY(){
     let topValor = window.getComputedStyle(jugador.nodo).getPropertyValue('top');
     
     let y = parseInt(topValor);
-    console.log(y);
     return y;
 }
 
@@ -404,7 +414,6 @@ function moverIzquierda(){
 
 function moverMapaIzquierda(){
     if(mapaDelJuego.x != 0){
-        console.log(mapaDelJuego.x);
         mapaDelJuego.nodo.style.left = mapaDelJuego.x + jugador.speed + "px";
         mapaDelJuego.x += jugador.speed;
         arrayObstacle.forEach((obst)=>{
@@ -416,7 +425,6 @@ function moverMapaIzquierda(){
 
 function moverMapaDerecha(){
     if(mapaDelJuego.x != (-520)){
-        console.log(mapaDelJuego.x);
         mapaDelJuego.nodo.style.left = mapaDelJuego.x - jugador.speed + "px";
         mapaDelJuego.x -= jugador.speed;
         arrayObstacle.forEach((obst)=>{
@@ -471,7 +479,7 @@ function escapoRango({x, y}){
 function noTraspasar({x, y, ancho, alto}){
     if (estaDentro({x, y, ancho, alto})) {
         const h2 = document.querySelector('#talk-pj');
-        h2.innerText = "choque";
+        h2.innerText = "choque un auto";
         
         if (jugador.x  > x && jugador.angulo == pi) {
             moverDerecha();
@@ -499,13 +507,12 @@ function getRandomArbitrary(min, max) {
 
 function cargarEnemigos(){
     for(let i=0; i<3; i++){
-        let enemigo = new Enemy(i, Math.round(getRandomArbitrary(300, 1960)), Math.round(getRandomArbitrary(110, 420)), 70, 80, 10);
+        let enemigo = new Enemy(i, Math.round(getRandomArbitrary((jugador.x + 300), (jugador.x + 1960))), Math.round(getRandomArbitrary(110, 420)), 70, 80, 10);
         arrayEnemigos.push(enemigo);
     }
 }
 function dibujarEnemigos(){
     for (const enemigo of arrayEnemigos) {
-        console.log(enemigo);
         enemigo.dibujar();
         enemigo.actualizarPosicion();
     }
@@ -528,7 +535,6 @@ function cargarObstaculos(){
 }
 function dibujarObstaculos(){
     for(const obstaculo of arrayObstacle){
-        console.log(obstaculo);
         obstaculo.dibujar();
         obstaculo.actualizarPosicion();
         for(const otroObst of arrayObstacle){
@@ -536,7 +542,6 @@ function dibujarObstaculos(){
                 let toca = true;
                 while(toca){
                     if(choqueObjtos(obstaculo, otroObst)){
-                        console.log("se tocan");
                         obstaculo.cambiarPosicion();
                         obstaculo.actualizarPosicion();
                     }else {
@@ -552,9 +557,38 @@ function dibujarObstaculos(){
 /*                                  CREACION                                  */
 /* -------------------------------------------------------------------------- */
 
+function matarPJ(){
+    const menu = document.querySelector('#menu');
+    menu.style.display = 'flex';
+    gamePause = true;
+    gameOver = true;
+    arrayEnemigos.forEach((enemigo) => {
+        enemigo.eliminar();
+    });
+    arrayObstacle.forEach((obst) => {
+        obst.eliminar();
+    });
+}
+
+
 function onJugarClick(){
     const menu = document.querySelector('#menu');
     menu.style.display = 'none';
+    arrayDisparos = [];
+    arrayEnemigos = [];
+    arrayObstacle = [];
+    cantDisparos = 0;
+    kills =0;
+    balas =30;
+    mapaDelJuego = new MapaJuego();
+    jugador = new Player(40, 260 , 70, 80, 10);
+    jugador.iniciar();
+    cargarEnemigos();
+    dibujarEnemigos();
+    cargarObstaculos();
+    dibujarObstaculos();
+    const cartel = document.querySelector('.cartel h2');
+    cartel.innerText = "Record: "+ record +" | kills: "+ kills;
     gamePause = false;
     gameOver = false;
 }
@@ -601,7 +635,7 @@ let gameOver = true;
 let gameWin = false;
 
 /* MAPA */
-const mapaDelJuego = new MapaJuego();
+let mapaDelJuego;
 
 /* JUGADOR */
 const pi = Math.PI;
@@ -609,35 +643,21 @@ let cantDisparos = 0;
 let kills =0;
 let balas =30;
 
-
-const cartel = document.querySelector('.cartel h2');
-cartel.innerText = "Record: "+ record +" | kills: "+ kills;
-
-const jugador = new Player(40, 260 , 70, 80, 10);
+let jugador;
 
 /* PROYECTIL */
 
-const arrayDisparos = [];
-
+let arrayDisparos;
 
 /* ENEMIGOS */
 
-const arrayEnemigos = [];
-
-cargarEnemigos();
-dibujarEnemigos();
-
+let arrayEnemigos;
 
 /* OBSTACULOS */
 
-const arrayObstacle = [];
-
-cargarObstaculos();
-dibujarObstaculos();
+let arrayObstacle;
 
 /* event listener */
-console.log(jugador);
-
 
 document.addEventListener("keydown", movimiento);
 
