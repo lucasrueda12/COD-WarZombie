@@ -24,6 +24,12 @@ class MapaJuego{
         this.ancho = 1980;
         this.alto = 600;
     }
+
+    iniciar(){
+        let mapa = this.nodo
+        mapa.style.top = this.y + 'px';
+        mapa.style.left = this.x + 'px';
+    }
 }
 
 /* -------------------------------------------------------------------------- */
@@ -98,14 +104,19 @@ class Enemy{
         this.x -= this.speed * Math.cos(this.angulo);
         this.y -= this.speed * Math.sin(this.angulo);
     }
+    
+    retroceder(){
+        this.x += this.speed * Math.cos(this.angulo);
+        this.y += this.speed * Math.sin(this.angulo);
+    }
 
     salirObjeto(){
         this.x += this.speed * Math.cos(this.angulo);
         this.y += this.speed * Math.sin(this.angulo);
     }
 
-    getAnguloEntrePuntos({x, y}){
-        this.angulo = Math.atan2(this.y-y, this.x-x);
+    getAnguloEntrePuntos({x, y, ancho, alto}){
+        this.angulo = Math.atan2(this.y- (y+(alto/2)), this.x-(x+(ancho/2)));
     }
 }
 
@@ -232,23 +243,6 @@ function movimiento(event) {
             noTraspasar(el);
         });
 
-        nuevosEnemigos();
-
-        arrayEnemigos.forEach((enemigo)=> {
-            if (enemigo.vivo == true){
-                enemigo.getAnguloEntrePuntos(jugador);
-                enemigo.moverse();
-                enemigo.actualizarPosicion();
-                for(const obst of arrayObstacle){
-                    if(choqueObjtos(enemigo, obst)){
-                        enemigo.getAnguloEntrePuntos(obst);
-                        enemigo.salirObjeto();
-                        enemigo.actualizarPosicion();
-                    }
-                }
-            }
-        });
-
         /* mov */
         if(event.key == 'w' && noAvanzarArriba(jugador.y)){
             moverArriba();
@@ -289,65 +283,7 @@ function movimiento(event) {
             event.key == 'r' && (balas =30);
         }
         
-        arrayDisparos.forEach((tiro)=>{
-            while(tiro.vivo){
-                tiro.desplazar();
-                tiro.actualizarPosicion();
-                if(escapoRango(tiro)){
-                    tiro.eliminar();
-                    tiro.vivo = false;
-                    const h2 = document.querySelector('#talk-pj');
-                    h2.innerText = "fue un tiro de advertencia";
-                }
-                if(tiro.vivo){
-                    for(const enemigo of arrayEnemigos){
-                        if(choqueObjtos(tiro, enemigo)){
-                            tiro.eliminar();
-                            tiro.vivo = false;
-                            enemigo.eliminar();
-                            enemigo.vivo = false;
-                            
-                            const h2 = document.querySelector('#talk-pj');
-                            h2.innerText = "mate un zombie";
-
-                            kills++;
-                            const cartel = document.querySelector('.cartel h2');
-                            cartel.innerText = "Record: "+ record +" | kills: "+ kills;
-
-                            kills >= record && localStorage.setItem('record', kills);
-                            
-                            record = localStorage.getItem('record') ?? 0;
-                            cartel.innerText = "Record: "+ record +" | kills: "+ kills;
-                        }
-                    }
-                }
-                if(tiro.vivo){
-                    for(const obst of arrayObstacle){
-                        if(choqueObjtos(tiro, obst)){
-                            tiro.eliminar();
-                            tiro.vivo = false;
-                            const h2 = document.querySelector('#talk-pj');
-                            h2.innerText = "malditos autos";
-                        }
-                    }
-                }
-            }
-        });
-
-        for(let i=0;i<arrayDisparos.length; i++){
-            arrayDisparos[i].vivo == false && arrayDisparos.splice(i,1);
-        }
-        for(let i=0; i<arrayEnemigos.length; i++){
-            arrayEnemigos[i].vivo == false && arrayEnemigos.splice(i,1);
-        }
-
-        arrayObstacle.forEach((el)=> {
-            noTraspasar(el)
-        });
-
-        arrayEnemigos.forEach((enemigo)=>{
-            estaDentro(enemigo) && matarPJ();
-        })
+        
     }
     /* PAUSA */
 
@@ -420,6 +356,20 @@ function moverMapaIzquierda(){
             obst.moverConMapaDerecha(jugador)
             obst.actualizarPosicion();
         })
+        arrayEnemigos.forEach((enemigo)=> {
+            if (enemigo.vivo == true){
+                enemigo.getAnguloEntrePuntos(jugador);
+                enemigo.retroceder();
+                enemigo.actualizarPosicion();
+                for(const obst of arrayObstacle){
+                    if(choqueObjtos(enemigo, obst)){
+                        enemigo.getAnguloEntrePuntos(obst);
+                        enemigo.salirObjeto();
+                        enemigo.actualizarPosicion();
+                    }
+                }
+            }
+        });
     }
 }
 
@@ -431,6 +381,20 @@ function moverMapaDerecha(){
             obst.moverConMapaIzquierda(jugador);
             obst.actualizarPosicion();
         })
+        arrayEnemigos.forEach((enemigo)=> {
+            if (enemigo.vivo == true){
+                enemigo.getAnguloEntrePuntos(jugador);
+                enemigo.moverse();
+                enemigo.actualizarPosicion();
+                for(const obst of arrayObstacle){
+                    if(choqueObjtos(enemigo, obst)){
+                        enemigo.getAnguloEntrePuntos(obst);
+                        enemigo.salirObjeto();
+                        enemigo.actualizarPosicion();
+                    }
+                }
+            }
+        });
     }
     
 }
@@ -477,21 +441,28 @@ function escapoRango({x, y}){
 
 
 function noTraspasar({x, y, ancho, alto}){
-    if (estaDentro({x, y, ancho, alto})) {
+    while(estaDentro({x, y, ancho, alto})) {
         const h2 = document.querySelector('#talk-pj');
         h2.innerText = "choque un auto";
         
+        jugador.x= capturarX();
+        jugador.y= capturarY();
+
         if (jugador.x  > x && jugador.angulo == pi) {
             moverDerecha();
+            jugador.angulo = pi;
         }
         if (jugador.x < x && jugador.angulo == 0) {
             moverIzquierda();
+            jugador.angulo = 0;
         }
         if (jugador.y < y && jugador.angulo == (3*pi/2)) {
             moverArriba();
+            jugador.angulo = (3*pi/2);
         }
         if (jugador.y > y && jugador.angulo == (pi/2)) {
             moverAbajo();
+            jugador.angulo = (pi/2);
         }
     }
 }
@@ -506,7 +477,7 @@ function getRandomArbitrary(min, max) {
 /* -------------------------------------------------------------------------- */
 
 function cargarEnemigos(){
-    for(let i=0; i<3; i++){
+    for(let i=0; i<numEnemigos; i++){
         let enemigo = new Enemy(i, Math.round(getRandomArbitrary((jugador.x + 300), (jugador.x + 1960))), Math.round(getRandomArbitrary(110, 420)), 70, 80, 10);
         arrayEnemigos.push(enemigo);
     }
@@ -519,8 +490,9 @@ function dibujarEnemigos(){
 }
 
 function nuevosEnemigos(){
-    if(arrayEnemigos.length < 2){
-        let nuevoEnemigo = new Enemy(kills, Math.round(getRandomArbitrary((jugador.x + 400), jugador.x + 1000)), Math.round(getRandomArbitrary(140, 370)), 70, 80, 10);
+    kills == cantEnemigosRonda && (cantEnemigosRonda+= cantEnemigosRonda);
+    while(arrayEnemigos.length < cantEnemigosRonda){
+        let nuevoEnemigo = new Enemy(numEnemigos++, Math.round(getRandomArbitrary((jugador.x + 400), jugador.x + 1000)), Math.round(getRandomArbitrary(140, 370)), 70, 80, 10);
         arrayEnemigos.push(nuevoEnemigo);
         nuevoEnemigo.dibujar();
         nuevoEnemigo.actualizarPosicion();
@@ -553,13 +525,17 @@ function dibujarObstaculos(){
     }
 }
 
+
+
 /* -------------------------------------------------------------------------- */
-/*                                  CREACION                                  */
+/*                                    MENU                                    */
 /* -------------------------------------------------------------------------- */
 
-function matarPJ(){
+function terminarJuego(){
     const menu = document.querySelector('#menu');
     menu.style.display = 'flex';
+
+    clearInterval(tick);
     gamePause = true;
     gameOver = true;
     arrayEnemigos.forEach((enemigo) => {
@@ -568,19 +544,28 @@ function matarPJ(){
     arrayObstacle.forEach((obst) => {
         obst.eliminar();
     });
+    cantEnemigosRonda = 2;
+    numEnemigos= 3;
 }
 
 
 function onJugarClick(){
+    /*  Ocultar menu */
     const menu = document.querySelector('#menu');
     menu.style.display = 'none';
+    
+    /* cargar variables y arrays */
     arrayDisparos = [];
     arrayEnemigos = [];
     arrayObstacle = [];
     cantDisparos = 0;
     kills =0;
     balas =30;
+    cantEnemigosRonda = 2;
+    numEnemigos= 3;
+    /* generar objetos */
     mapaDelJuego = new MapaJuego();
+    mapaDelJuego.iniciar();
     jugador = new Player(40, 260 , 70, 80, 10);
     jugador.iniciar();
     cargarEnemigos();
@@ -589,8 +574,98 @@ function onJugarClick(){
     dibujarObstaculos();
     const cartel = document.querySelector('.cartel h2');
     cartel.innerText = "Record: "+ record +" | kills: "+ kills;
+
+    /* activar game */
     gamePause = false;
     gameOver = false;
+
+    tick = setInterval(()=>{
+        jugador.x= capturarX();
+        jugador.y= capturarY();
+
+        arrayObstacle.forEach((el)=> {
+            noTraspasar(el);
+        });
+        
+        setTimeout(()=>{
+            nuevosEnemigos();
+        }, 1000);
+
+        arrayEnemigos.forEach((enemigo)=> {
+            if (enemigo.vivo == true){
+                enemigo.getAnguloEntrePuntos(jugador);
+                enemigo.moverse();
+                enemigo.actualizarPosicion();
+                for(const obst of arrayObstacle){
+                    if(choqueObjtos(enemigo, obst)){
+                        enemigo.getAnguloEntrePuntos(obst);
+                        enemigo.salirObjeto();
+                        enemigo.actualizarPosicion();
+                    }
+                }
+            }
+        });
+
+        arrayDisparos.forEach((tiro)=>{
+            while(tiro.vivo){
+                tiro.desplazar();
+                tiro.actualizarPosicion();
+                if(escapoRango(tiro)){
+                    tiro.eliminar();
+                    tiro.vivo = false;
+                    const h2 = document.querySelector('#talk-pj');
+                    h2.innerText = "fue un tiro de advertencia";
+                }
+                if(tiro.vivo){
+                    for(const enemigo of arrayEnemigos){
+                        if(choqueObjtos(tiro, enemigo)){
+                            tiro.eliminar();
+                            tiro.vivo = false;
+                            enemigo.eliminar();
+                            enemigo.vivo = false;
+                            
+                            const h2 = document.querySelector('#talk-pj');
+                            h2.innerText = "mate un zombie";
+
+                            kills++;
+                            const cartel = document.querySelector('.cartel h2');
+                            cartel.innerText = "Record: "+ record +" | kills: "+ kills;
+
+                            kills >= record && localStorage.setItem('record', kills);
+                            
+                            record = localStorage.getItem('record') ?? 0;
+                            cartel.innerText = "Record: "+ record +" | kills: "+ kills;
+                        }
+                    }
+                }
+                if(tiro.vivo){
+                    for(const obst of arrayObstacle){
+                        if(choqueObjtos(tiro, obst)){
+                            tiro.eliminar();
+                            tiro.vivo = false;
+                            const h2 = document.querySelector('#talk-pj');
+                            h2.innerText = "malditos autos";
+                        }
+                    }
+                }
+            }
+        });
+
+        for(let i=0;i<arrayDisparos.length; i++){
+            arrayDisparos[i].vivo == false && arrayDisparos.splice(i,1);
+        }
+        for(let i=0; i<arrayEnemigos.length; i++){
+            arrayEnemigos[i].vivo == false && arrayEnemigos.splice(i,1);
+        }
+
+        arrayObstacle.forEach((el)=> {
+            noTraspasar(el)
+        });
+
+        arrayEnemigos.forEach((enemigo)=>{
+            estaDentro(enemigo) && terminarJuego();
+        });
+    }, 100);
 }
 
 function generarMenu(){
@@ -629,6 +704,10 @@ function generarMenu(){
 
 generarMenu();
 
+/* -------------------------------------------------------------------------- */
+/*                             VARIABLES GLOBALES                             */
+/* -------------------------------------------------------------------------- */
+
 /* Estado del juego */
 let gamePause = true;
 let gameOver = true;
@@ -639,10 +718,11 @@ let mapaDelJuego;
 
 /* JUGADOR */
 const pi = Math.PI;
-let cantDisparos = 0;
-let kills =0;
-let balas =30;
-
+let cantDisparos;
+let kills;
+let balas;
+let cantEnemigosRonda;
+let numEnemigos;
 let jugador;
 
 /* PROYECTIL */
@@ -658,6 +738,7 @@ let arrayEnemigos;
 let arrayObstacle;
 
 /* event listener */
+let tick;
 
 document.addEventListener("keydown", movimiento);
 
