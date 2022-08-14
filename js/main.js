@@ -177,11 +177,11 @@ class Obstaculo{
 /* -------------------------------------------------------------------------- */
 
 class Proyectil{
-    constructor(id, x, y, angulo){
+    constructor(id, x, y, angulo, speed){
         this.id= id;
         this.x= x;
         this.y= y;
-        this.speed= 10;
+        this.speed= speed;
         this.ancho = 10;
         this.alto = 10;
         this.angulo= angulo;
@@ -205,8 +205,8 @@ class Proyectil{
 
 
     desplazar(){
-        this.x += this.speed * Math.cos(this.angulo);
-        this.y += this.speed * Math.sin(this.angulo);
+        this.x -= this.speed * Math.cos(this.angulo);
+        this.y -= this.speed * Math.sin(this.angulo);
     }
     
     obtenerID(){
@@ -235,6 +235,7 @@ class Proyectil{
 /* -------------------------------------------------------------------------- */
 
 function movimiento(event) {
+    console.log('teclado');
     if(!gamePause && !gameOver && !gameWin){
         jugador.x= capturarX();
         jugador.y= capturarY();
@@ -260,30 +261,10 @@ function movimiento(event) {
         }
 
         /* tiro */
-        if(balas>0){
-            if(event.key == 'j'){
-                balas--;
-                const h2 = document.querySelector('#talk-pj');
-                h2.innerText = "me quedan" + balas;
-
-                let balax = capturarX() + parseInt(jugador.ancho)/2;
-                let balay = capturarY() + parseInt(jugador.alto)/2;
-                const bullet = new Proyectil(cantDisparos, balax, balay, jugador.angulo);
-                cantDisparos++;
-                
-                bullet.dibujar();
-                bullet.actualizarPosicion();
-                arrayDisparos.push(bullet);
-            }
-        }else{
-            const h2 = document.querySelector('#talk-pj');
-            h2.innerText = "debo recargar";
-        }
         if(balas<30){
             event.key == 'r' && (balas =30);
         }
-        
-        
+
     }
     /* PAUSA */
 
@@ -291,6 +272,35 @@ function movimiento(event) {
     event.key == 'p' && (gamePause = !gamePause);
 
     mostrarPausa();
+}
+
+function getAngulo(balax, balay, mousex, mousey){
+    return angulo = Math.atan2(balay- mousey, balax- mousex);
+}
+
+function clickDisparo(event){
+    console.log(event.clientX, event.clientY);
+    if(!gamePause && !gameOver){
+        if(balas>0){
+
+            balas--;
+            const h2 = document.querySelector('#talk-pj');
+            h2.innerText = "me quedan" + balas;
+    
+            let balax = capturarX() + parseInt(jugador.ancho)/2;
+            let balay = capturarY() + parseInt(jugador.alto)/2;
+            const bullet = new Proyectil(cantDisparos, balax, balay, (getAngulo(balax, balay, event.clientX, event.clientY)), 20);
+            cantDisparos++;
+            
+            bullet.dibujar();
+            bullet.actualizarPosicion();
+            arrayDisparos.push(bullet);
+    
+        }else{
+            const h2 = document.querySelector('#talk-pj');
+            h2.innerText = "debo recargar";
+        }
+    }
 }
 
 function onPausaClick(){
@@ -489,8 +499,11 @@ function dibujarEnemigos(){
     }
 }
 
+/* 
+    NUEVOS ENEMIGOS
+ */
+
 function nuevosEnemigos(){
-    kills == cantEnemigosRonda && (cantEnemigosRonda+= cantEnemigosRonda);
     while(arrayEnemigos.length < cantEnemigosRonda){
         let nuevoEnemigo = new Enemy(numEnemigos++, Math.round(getRandomArbitrary((jugador.x + 400), jugador.x + 1000)), Math.round(getRandomArbitrary(140, 370)), 70, 80, 10);
         arrayEnemigos.push(nuevoEnemigo);
@@ -535,7 +548,7 @@ function terminarJuego(){
     const menu = document.querySelector('#menu');
     menu.style.display = 'flex';
 
-    clearInterval(tick);
+    detenerTickGame();
     gamePause = true;
     gameOver = true;
     arrayEnemigos.forEach((enemigo) => {
@@ -550,6 +563,7 @@ function terminarJuego(){
 
 
 function onJugarClick(){
+    
     /*  Ocultar menu */
     const menu = document.querySelector('#menu');
     menu.style.display = 'none';
@@ -575,10 +589,20 @@ function onJugarClick(){
     const cartel = document.querySelector('.cartel h2');
     cartel.innerText = "Record: "+ record +" | kills: "+ kills;
 
+    
     /* activar game */
     gamePause = false;
     gameOver = false;
 
+    tickGame();
+    
+}
+
+
+/* -------------------------------------------------------------------------- */
+/*                               TICK DEL JUEGO                               */
+/* -------------------------------------------------------------------------- */
+function tickGame(){
     tick = setInterval(()=>{
         jugador.x= capturarX();
         jugador.y= capturarY();
@@ -586,10 +610,14 @@ function onJugarClick(){
         arrayObstacle.forEach((el)=> {
             noTraspasar(el);
         });
+
+        if(kills == cantEnemigosRonda){
+            cantEnemigosRonda += cantEnemigosRonda;
+            setTimeout(()=>{
+                nuevosEnemigos();
+            }, 10000);
+        }
         
-        setTimeout(()=>{
-            nuevosEnemigos();
-        }, 1000);
 
         arrayEnemigos.forEach((enemigo)=> {
             if (enemigo.vivo == true){
@@ -607,7 +635,8 @@ function onJugarClick(){
         });
 
         arrayDisparos.forEach((tiro)=>{
-            while(tiro.vivo){
+            if(tiro.vivo){
+                console.log(tiro.x, tiro.y);
                 tiro.desplazar();
                 tiro.actualizarPosicion();
                 if(escapoRango(tiro)){
@@ -666,6 +695,10 @@ function onJugarClick(){
             estaDentro(enemigo) && terminarJuego();
         });
     }, 100);
+}
+
+function detenerTickGame(){
+    clearInterval(tick);
 }
 
 function generarMenu(){
@@ -741,7 +774,7 @@ let arrayObstacle;
 let tick;
 
 document.addEventListener("keydown", movimiento);
-
+document.addEventListener("click", clickDisparo);
 
 
 
