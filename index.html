@@ -147,21 +147,26 @@
                 <h2 class="for-tit">Deseas recibir novedades?</h2>
                 <form class="formulario" action="">
                     <label for="">Nombre y apellido*</label>
-                    <input type="">
+                    <input type="text" id="nomYapellido">
                     <label for="">Mail*</label>
-                    <input type="">
+                    <input type="text" id="mail">
                     <label for="">Compania</label>
-                    <input type="">
+                    <input type="text" id="compania">
                     <label for="">Mensaje</label>
-                    <textarea name="" id="" cols="30" rows="10"></textarea> 
-                    <input type="submit" value="Enviar">
+                    <textarea id="mensaje" name="" cols="30" rows="10"></textarea>
+                    <button type="buttom" id="input" onclick="traerDatosFormulario()">enviar</button>
                 </form>
             </article>
         </seccion>
     </main>
+
+    <!-- SWEETALERT -->
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <!--
                     SCRIPT del juego
                                     -->
                                     <script src="js/main.js"></script>
+    
 </body>
 </html>

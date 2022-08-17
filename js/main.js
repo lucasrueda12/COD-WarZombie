@@ -1,8 +1,11 @@
+
 /* -------------------------------------------------------------------------- */
 /*                                LOCAL STORAGE                               */
 /* -------------------------------------------------------------------------- */
 
 let record = localStorage.getItem('record') ?? 0;
+let subsStorage= localStorage.getItem('suscriptores') ?? [];
+suscriptores= JSON.parse(subsStorage);
 
 /* subi la variable juego para que no tenga conflictos con funciones y variables */
 const juego = document.querySelector('#juego');
@@ -840,6 +843,53 @@ let tick;
 document.addEventListener("keydown", movimiento);
 document.addEventListener("click", clickDisparo);
 
+/* -------------------------------------------------------------------------- */
+/*                                 FORMULARIO                                 */
+/* -------------------------------------------------------------------------- */
+
+/* SWEETALERT */
+let nomYapellido;
+let mail;
+let compania;
+let mensaje;
+
+function traerDatosFormulario() {
+    nomYapellido = document.getElementById('nomYapellido').value;
+    mail = document.getElementById('mail').value;
+    compania = document.getElementById('compania').value;
+    mensaje = document.getElementById('mensaje').value;
+    
+    if( nomYapellido != "" && mail != ""){
+        let esSusNuevo= true;
+        suscriptores.forEach((elem)=>{
+            if(elem.mail == mail){
+                esSusNuevo= false;
+            }
+        })
+        if(esSusNuevo){
+            console.log(nomYapellido, mail, compania, mensaje);
+            Swal.fire({
+                icon: "success",
+                title: "gracias por suscribirte",
+                text: `${nomYapellido}, se te cobrara 10USD al mes, saludos `
+            });
+            /* agregar a la lista de subs */
+            const sus = { nombre: nomYapellido, email: mail, compania: compania,mensaje:mensaje};
+            suscriptores.push(sus);
+            localStorage.setItem('suscriptores', JSON.stringify(suscriptores));
+        }else{
+            Swal.fire({
+                icon: 'error',
+                text: `Ya estas suscripto, paga lo que debes`
+            });
+        }
+        
+    }else{
+        Swal.fire({
+            icon: 'error',
+            text: `Te faltan ingresar datos`
+        });
+    }
+}
 
 
-/* setInterval(); */
