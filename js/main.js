@@ -357,7 +357,11 @@ function moverMapaIzquierda(){
         arrayEnemigos.forEach((enemigo)=> {
             if (enemigo.vivo == true){
                 enemigo.getAnguloEntrePuntos(jugador);
-                enemigo.retroceder();
+                if(jugador.x> enemigo.x){
+                    enemigo.moverse();
+                }else{
+                    enemigo.retroceder();
+                }
                 enemigo.actualizarPosicion();
                 for(const obst of arrayObstacle){
                     if(choqueObjtos(enemigo, obst)){
@@ -381,7 +385,11 @@ function moverMapaDerecha(){
         arrayEnemigos.forEach((enemigo)=> {
             if (enemigo.vivo == true){
                 enemigo.getAnguloEntrePuntos(jugador);
-                enemigo.moverse();
+                if(jugador.x> enemigo.x){
+                    enemigo.retroceder();
+                }else{
+                    enemigo.moverse();
+                }
                 enemigo.actualizarPosicion();
                 for(const obst of arrayObstacle){
                     if(choqueObjtos(enemigo, obst)){
@@ -506,9 +514,14 @@ function nuevosEnemigos(){
 }
 // CARGO LOS OBSTACULOS DEL MAPA
 function cargarObstaculos(){
-    for(let i=0; i<3; i++){
-        const obstaculo = new Obstaculo(i, Math.round(getRandomArbitrary(400, 1980)), Math.round(getRandomArbitrary(110, 420)), 250, 100);
-        arrayObstacle.push(obstaculo);
+    for(let i=0; i<4; i++){
+        if(i%2==0){
+            const obstaculo = new Obstaculo(i, Math.round(getRandomArbitrary(400, 1980)), Math.round(getRandomArbitrary(110, 190)), 250, 100);
+            arrayObstacle.push(obstaculo);
+        }else{
+            const obstaculo = new Obstaculo(i, Math.round(getRandomArbitrary(400, 1980)), Math.round(getRandomArbitrary(350, 420)), 250, 100);
+            arrayObstacle.push(obstaculo);
+        }
     }
 }
 // INSERTO EL DOM DE LOS OBSTACULOS, SI LOS OBSTACULOS SE PISAN SE VUELVEN A UBICAR 
@@ -573,7 +586,6 @@ function tickGame(){
             /* MOVIMIENTO DE LOS ENEMIGOS Y QUE NO TRASPASEN LSO OBSTACULOS */
             arrayEnemigos.forEach((enemigo)=> {
                 if (enemigo.vivo == true){
-                    console.log(enemigo.angulo, enemigo.id);
                     enemigo.getAnguloEntrePuntos(jugador);
                     enemigo.moverse();
                     enemigo.actualizarPosicion();
@@ -590,7 +602,6 @@ function tickGame(){
             /* MOVIMIENTOS DEL DISPARO E INTERACCION */
             arrayDisparos.forEach((tiro)=>{
                 if(tiro.vivo){
-                    console.log(tiro.x, tiro.y);
                     tiro.desplazar();
                     tiro.actualizarPosicion();
                     if(escapoRango(tiro)){
