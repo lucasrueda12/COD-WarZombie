@@ -76,7 +76,6 @@ class Enemy{
         this.speed = speed;
         this.angulo = 0;
         this.vivo = true;
-        this.anguloObjeto = 0;
     }
 
     dibujar(){
@@ -308,7 +307,7 @@ function clickDisparo(event){
 }
 
 
-
+/* CAMPTURO LAS COORDENADAS DEL JUGADOR */
 function capturarX(){
     let leftValor = window.getComputedStyle(jugador.nodo).getPropertyValue('left');
     
@@ -322,29 +321,31 @@ function capturarY(){
     return y;
 }
 
+/* MUEVO AL JUGADOR SEGUN LAS DIRECCIONES, MODIFICO SU ANGULO PARA LA COLISION CON OBSTACULOS */
 function moverArriba(){
     jugador.nodo.style.top = jugador.y - jugador.speed + "px";
     jugador.cambiarAngulo((pi/2));
 }
 function moverAbajo(){
-    
     jugador.nodo.style.top = jugador.y + jugador.speed + "px";
     jugador.cambiarAngulo((3*pi/2));
-
 }
+/* TAMBIEN MODIFICO LA POSICION DEL MAPA Y VOLTEO LA IMG DEL JUGADOR */
 function moverDerecha(){
     const h2 = document.querySelector('#talk-pj');
     h2.innerText = "avancemos!";
+    jugador.nodo.classList.remove("rota-horizontal");
     jugador.nodo.style.left = jugador.x + jugador.speed + "px";
     jugador.cambiarAngulo(0);
 }
 function moverIzquierda(){
     const h2 = document.querySelector('#talk-pj');
     h2.innerText = "retrocedan!";
+    jugador.nodo.classList.add("rota-horizontal");
     jugador.nodo.style.left = jugador.x - jugador.speed + "px";
     jugador.cambiarAngulo(pi);
 }
-
+/* MOV DEL MAPA */
 function moverMapaIzquierda(){
     if(mapaDelJuego.x != 0){
         mapaDelJuego.nodo.style.left = mapaDelJuego.x + jugador.speed + "px";
@@ -369,7 +370,6 @@ function moverMapaIzquierda(){
         });
     }
 }
-
 function moverMapaDerecha(){
     if(mapaDelJuego.x != (-520)){
         mapaDelJuego.nodo.style.left = mapaDelJuego.x - jugador.speed + "px";
@@ -400,7 +400,7 @@ function moverMapaDerecha(){
 /*                                 COLISIONES                                 */
 /* -------------------------------------------------------------------------- */
 
-
+/* CHEQUEO CUANDO EL PERSONAJE SOBREVAPSE LOS LIMITES ESTABECIDOS */
 /* if ternarios */
 function noAvanzarArriba(y){
     return (y<=110)? false : true;
@@ -415,11 +415,7 @@ function noAvanzarDerecha(x){
     return x>=1960? false : true;
 }
 
-
-/* DESESTRUCTURACION */
-
-
-// JUGADOR TOCANDO UN OBJETO
+/* PREGUNTO SI EL PERSONAJE ESTA TOCANDO UN OBJETO */
 function estaDentro({x, y, ancho, alto}){
     return (jugador.x < x+ancho  && jugador.x+jugador.ancho > x
     && jugador.y < y+alto && jugador.y+jugador.alto > y);
@@ -436,7 +432,7 @@ function escapoRango({x, y}){
     return (x < jugador.x-600 || x> jugador.x+600 || y < jugador.y-600 || y> jugador.y +600);
 }
 
-
+// MUEVO AL JUGADOR HASAT QUE SALGA DEL OBJETO
 function noTraspasar({x, y, ancho, alto}){
     while(estaDentro({x, y, ancho, alto})) {
         const h2 = document.querySelector('#talk-pj');
@@ -472,13 +468,14 @@ function getRandomArbitrary(min, max) {
 /* -------------------------------------------------------------------------- */
 /*                                   GENERAR                                  */
 /* -------------------------------------------------------------------------- */
-
+// GENERO LOS PRIMEROS ENEMIGOS
 function cargarEnemigos(){
     for(let i=0; i<numEnemigos; i++){
-        let enemigo = new Enemy(i, Math.round(getRandomArbitrary((jugador.x + 300), (jugador.x + 1960))), Math.round(getRandomArbitrary(110, 420)), 70, 80, 10);
+        let enemigo = new Enemy(i, Math.round(getRandomArbitrary((jugador.x + 400), (jugador.x + 1960))), Math.round(getRandomArbitrary(110, 420)), 70, 80, 10);
         arrayEnemigos.push(enemigo);
     }
 }
+// INSERTO EL DOM DE LOS ENEMIGOS
 function dibujarEnemigos(){
     for (const enemigo of arrayEnemigos) {
         enemigo.dibujar();
@@ -492,19 +489,29 @@ function dibujarEnemigos(){
 
 function nuevosEnemigos(){
     while(arrayEnemigos.length < cantEnemigosRonda){
-        let nuevoEnemigo = new Enemy(numEnemigos++, Math.round(getRandomArbitrary((jugador.x + 400), jugador.x + 1000)), Math.round(getRandomArbitrary(140, 370)), 70, 80, 10);
-        arrayEnemigos.push(nuevoEnemigo);
-        nuevoEnemigo.dibujar();
-        nuevoEnemigo.actualizarPosicion();
+        numEnemigos++
+        if(numEnemigos%2 == 0){
+            let nuevoEnemigo = new Enemy(numEnemigos, Math.round(getRandomArbitrary((jugador.x + 400), jugador.x + 1000)), Math.round(getRandomArbitrary(140, 370)), 70, 80, 10);
+            arrayEnemigos.push(nuevoEnemigo);
+            nuevoEnemigo.dibujar();
+            nuevoEnemigo.actualizarPosicion();
+        }else{
+            let nuevoEnemigo = new Enemy(numEnemigos, Math.round(getRandomArbitrary((jugador.x - 400), jugador.x - 1000)), Math.round(getRandomArbitrary(140, 370)), 70, 80, 10);
+            nuevoEnemigo.etiqueta = '<img src="src/img/Zombie_SpriteInversa.png" alt="enemigo">';
+            arrayEnemigos.push(nuevoEnemigo);
+            nuevoEnemigo.dibujar();
+            nuevoEnemigo.actualizarPosicion();
+        }
     }
 }
-
+// CARGO LOS OBSTACULOS DEL MAPA
 function cargarObstaculos(){
     for(let i=0; i<3; i++){
         const obstaculo = new Obstaculo(i, Math.round(getRandomArbitrary(400, 1980)), Math.round(getRandomArbitrary(110, 420)), 250, 100);
         arrayObstacle.push(obstaculo);
     }
 }
+// INSERTO EL DOM DE LOS OBSTACULOS, SI LOS OBSTACULOS SE PISAN SE VUELVEN A UBICAR 
 function dibujarObstaculos(){
     for(const obstaculo of arrayObstacle){
         obstaculo.dibujar();
@@ -525,106 +532,13 @@ function dibujarObstaculos(){
     }
 }
 
-
-
-/* -------------------------------------------------------------------------- */
-/*                                    MENU                                    */
-/* -------------------------------------------------------------------------- */
-
-function onPausaClick(){
-    gamePause = !gamePause;
-}
-
-function mostrarPausa(){
-    if(!gameOver && gamePause && (document.querySelector('#pausa') == null)){
-        const cartelPausa = document.createElement('article');
-        cartelPausa.setAttribute("id", 'pausa');
-        cartelPausa.classList.add("pausaGame");
-        cartelPausa.innerHTML = '<img class="botonPause" onclick="onPausaClick()" src="src/img/pausa.png" alt="pausa"><div class="exit" onclick="onclickPauseGameOver()"><img src="src/img/exitPixel.png" alt="gameOver"></div>';
-
-        juego.appendChild(cartelPausa);
-    }else if((gamePause == false) && (document.querySelector('#pausa') != null)){
-        let cartelPausa = document.querySelector('#pausa');
-        cartelPausa.remove();
-    }
-}
-
-function onclickPauseGameOver(){
-    let cartelPausa = document.querySelector('#pausa');
-    cartelPausa.remove();
-    terminarJuego();
-}
-
-function terminarJuego(){
-    if(document.querySelector('#ronda') != null){
-        const cartelRon = document.querySelector('#ronda');
-        cartelRon.remove();
-    }
-    const menu = document.querySelector('#menu');
-    menu.style.display = 'flex';
-
-    detenerTickGame();
-    gamePause = true;
-    gameOver = true;
-    arrayDisparos.forEach((tiro)=>{
-        tiro.eliminar();
-    })
-    arrayEnemigos.forEach((enemigo) => {
-        enemigo.eliminar();
-    });
-    arrayObstacle.forEach((obst) => {
-        obst.eliminar();
-    });
-    cantEnemigosRonda = 2;
-    numEnemigos= 3;
-}
-
-
-function onJugarClick(){
-    
-    /*  Ocultar menu */
-    const menu = document.querySelector('#menu');
-    menu.style.display = 'none';
-    
-    /* cargar variables y arrays */
-    arrayDisparos = [];
-    arrayEnemigos = [];
-    arrayObstacle = [];
-    cantDisparos = 0;
-    kills =0;
-    balas =30;
-    ronda=0;
-    rondaInicio= true;
-    cantEnemigosRonda = 2;
-    numEnemigos= 3;
-    /* generar objetos */
-    mapaDelJuego = new MapaJuego();
-    mapaDelJuego.iniciar();
-    jugador = new Player(40, 260 , 70, 80, 10);
-    jugador.iniciar();
-    cargarEnemigos();
-    dibujarEnemigos();
-    cargarObstaculos();
-    dibujarObstaculos();
-    const cartel = document.querySelector('.cartel h2');
-    cartel.innerText = "Record: "+ record +" | kills: "+ kills;
-
-    
-    /* activar game */
-    setTimeout(()=>{
-        gamePause = false;
-        gameOver = false;
-    
-        tickGame();
-    },500);
-    
-    
-}
-
-
 /* -------------------------------------------------------------------------- */
 /*                               TICK DEL JUEGO                               */
 /* -------------------------------------------------------------------------- */
+
+// CON EL TICK EJECUTO TODAS LAS FUNCIONES DE MOVIMIENTOS DE ENEMIGOS, CHEQUEO LAS COLISIONES, VERIFICO SI LAS BALAS IMPACTARON CONTRA UN OBJ O SI SE ESCAPARON.
+// TAMBIEN SI MURIERON TODOS LOS ENEMIGOS DE LA RONDA PARA GENERAR NUEVOS Y SI ALGUN ENEMIGO TOCO AL JUGADOR.
+
 function tickGame(){
     tick = setInterval(()=>{
         if(!gamePause && !gameOver){
@@ -659,6 +573,7 @@ function tickGame(){
             /* MOVIMIENTO DE LOS ENEMIGOS Y QUE NO TRASPASEN LSO OBSTACULOS */
             arrayEnemigos.forEach((enemigo)=> {
                 if (enemigo.vivo == true){
+                    console.log(enemigo.angulo, enemigo.id);
                     enemigo.getAnguloEntrePuntos(jugador);
                     enemigo.moverse();
                     enemigo.actualizarPosicion();
@@ -739,6 +654,208 @@ function tickGame(){
     }, 100);
 }
 
+
+// DETIENE EL JUEGO
+function detenerTickGame(){
+    clearInterval(tick);
+}
+
+
+/* -------------------------------------------------------------------------- */
+/*                                    MENU                                    */
+/* -------------------------------------------------------------------------- */
+// PARA USAR EL CLICK PARA DESPAUSAR
+function onPausaClick(){
+    gamePause = !gamePause;
+}
+
+// MOSTRAR PAUSA
+function mostrarPausa(){
+    if(!gameOver && gamePause && (document.querySelector('#pausa') == null)){
+        const cartelPausa = document.createElement('article');
+        cartelPausa.setAttribute("id", 'pausa');
+        cartelPausa.classList.add("pausaGame");
+        cartelPausa.innerHTML = '<img class="botonPause" onclick="onPausaClick()" src="src/img/pausa.png" alt="pausa"><div class="exit" onclick="onclickPauseGameOver()"><img src="src/img/exitPixel.png" alt="gameOver"></div>';
+
+        juego.appendChild(cartelPausa);
+    }else if((gamePause == false) && (document.querySelector('#pausa') != null)){
+        let cartelPausa = document.querySelector('#pausa');
+        cartelPausa.remove();
+    }
+}
+// SALIR AL MENU DESDE LA PAUSA
+function onclickPauseGameOver(){
+    let cartelPausa = document.querySelector('#pausa');
+    cartelPausa.remove();
+    terminarJuego();
+}
+// TERMINA EL JUEGO, RESTABLECE LAS VARIABLES, MUESTRA EL MENU, QUITA EL DOM DE LOS OBSTACULOS, ENEMIGOS Y BALAS
+function terminarJuego(){
+    if(document.querySelector('#ronda') != null){
+        const cartelRon = document.querySelector('#ronda');
+        cartelRon.remove();
+    }
+    const menu = document.querySelector('#menu');
+    menu.style.display = 'flex';
+
+    detenerTickGame();
+    gamePause = true;
+    gameOver = true;
+    arrayDisparos.forEach((tiro)=>{
+        tiro.eliminar();
+    })
+    arrayEnemigos.forEach((enemigo) => {
+        enemigo.eliminar();
+    });
+    arrayObstacle.forEach((obst) => {
+        obst.eliminar();
+    });
+    cantEnemigosRonda = 2;
+    numEnemigos= 3;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                   NIVELES                                  */
+/* -------------------------------------------------------------------------- */
+
+// GENERA EL DOM DE LA SECCION NIVEL, GENERA DOS TIPOS DE MAPAS PARA EL JUEGO, MUESTRA EN PANTALLA
+function onNivelesClick(){
+    let niveles = document.createElement('article');
+    niveles.setAttribute("id", 'menuNiveles');
+    niveles.classList.add("menuNiveles");
+
+    /* fondoClaro */
+    let fondo1 = document.createElement('div');
+    fondo1.setAttribute("id", 'fondoClaro');
+    fondo1.classList.add("fondoClaro");
+    fondo1.setAttribute("onclick", 'fondoClaro()');
+    fondo1.innerHTML = '<img src="src/img/calle.jpg" alt="calleClara">'
+
+    /* fondoOscuro */
+    let fondo2 = document.createElement('div');
+    fondo2.setAttribute("id", 'fondoOscuro');
+    fondo2.classList.add("fondoOscuro");
+    fondo2.setAttribute("onclick", 'fondoOscuro()');
+    fondo2.innerHTML = '<img src="src/img/calleOscura.jpg" alt="calleOsc">'
+
+    /* flecha De Atras */
+    let back= document.createElement('div');
+    back.setAttribute("id", 'back');
+    back.classList.add("back");
+    back.setAttribute("onclick", 'volverAtrasLVL()');
+    back.innerHTML = '<img src="src/img/flecha-hacia-atras.png" alt="flecha">'
+    
+    /* agregando a la pantalla */
+    niveles.appendChild(fondo1);
+    niveles.appendChild(fondo2);
+    niveles.appendChild(back);
+
+    juego.appendChild(niveles);
+}
+// LOS FONDOS DISPONIBLES
+function fondoOscuro(){
+    const fondo = document.querySelector('#fondo');
+    fondo.style.background = 'url(../src/img/calleOscura.jpg)';
+}
+function fondoClaro(){
+    const fondo = document.querySelector('#fondo');
+    fondo.style.background = 'url(../src/img/calle.jpg)';
+}
+// BOTON PARA VOLVER ATRAS
+function volverAtrasLVL(){
+    let niveles = document.querySelector('#menuNiveles');
+    niveles.remove();
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                  MARCADOR                                  */
+/* -------------------------------------------------------------------------- */
+
+// MUESTRA LA PANTALLA DEL MARCADOR DE PUNTAJE DEL JUEGO
+function onMarcadorClick(){
+    const marcador = document.createElement('div');
+    marcador.setAttribute('id', 'menuMarcador');
+    marcador.classList.add("menuMarcador");
+
+    let back= document.createElement('div');
+    back.setAttribute("id", 'back');
+    back.classList.add("back");
+    back.setAttribute("onclick", 'volverAtrasMarcador()');
+    back.innerHTML = '<img src="src/img/flecha-hacia-atras.png" alt="flecha">'
+
+
+    marcador.appendChild(back);
+    
+    /* fetch */
+    mostrarScores();
+
+    juego.appendChild(marcador);
+}
+// LLAMA AL JSON CON LOS MARCADORES
+const mostrarScores = async () => {
+    const response = await fetch('scores.json');
+    const data = await response.json();
+    const nodo = document.createElement('div');
+    nodo.classList.add("nodo");
+
+    let acumulador = ``;
+    data.forEach((dato) => {
+        acumulador += `<p class="jugadores"> ${dato.name}  ${dato.score}  ${dato.ronda}</p>`;
+    });
+    nodo.innerHTML = `<p>nombre------score:------ronda:</p>` +acumulador;
+    let marcador = document.querySelector('#menuMarcador');
+    marcador.appendChild(nodo);
+}
+//BOTON PARA VOLVER ATRAS DESDE EL MARCADOR
+function volverAtrasMarcador(){
+    let marcador = document.querySelector('#menuMarcador');
+    marcador.remove();
+}
+
+// BOTON PARA EMPEZAR EL JUEGO, INICIALIZA LA VARIABLES NECESARIAS, LLAMA A LAS FUNCIONES DE LOS ENEMIGOS Y LOS OBSTACULOS.
+// DESPUES DE ESTAR TODO LISTO ACTIVA EL JUEGO Y EL TICK
+function onJugarClick(){
+    
+    /*  Ocultar menu */
+    const menu = document.querySelector('#menu');
+    menu.style.display = 'none';
+    
+    /* cargar variables y arrays */
+    arrayDisparos = [];
+    arrayEnemigos = [];
+    arrayObstacle = [];
+    cantDisparos = 0;
+    kills =0;
+    balas =30;
+    ronda=0;
+    rondaInicio= true;
+    cantEnemigosRonda = 2;
+    numEnemigos= 3;
+    /* generar objetos */
+    mapaDelJuego = new MapaJuego();
+    mapaDelJuego.iniciar();
+    jugador = new Player(40, 260 , 70, 80, 10);
+    jugador.iniciar();
+    cargarEnemigos();
+    dibujarEnemigos();
+    cargarObstaculos();
+    dibujarObstaculos();
+    const cartel = document.querySelector('.cartel h2');
+    cartel.innerText = "Record: "+ record +" | kills: "+ kills;
+
+    
+    /* activar game */
+    setTimeout(()=>{
+        gamePause = false;
+        gameOver = false;
+    
+        tickGame();
+    },500);
+    
+    
+}
+
+// MUESTRA PANTALLA DE GAME OVER Y BOTON PARA VOLVER AL INICIO
 function mostrarGameOver(){
     if(gameOver && (document.querySelector('#gameOver') == null)){
         const cartelGameover = document.createElement('article');
@@ -748,42 +865,42 @@ function mostrarGameOver(){
         juego.appendChild(cartelGameover);
     }
 }
-
-function detenerTickGame(){
-    clearInterval(tick);
-}
-
+// BOTON PARA VOLVER AL MENU DESDEC GAME OVER
 function onclickGameOver() {
     const cartelGameover = document.querySelector('#gameOver');
     cartelGameover.remove();
     terminarJuego();
 }
 
+// GENERA EL MENU PRINCIPAL DEL JUEGO, CON LA INFORMACION DE LOS TECLAS Y LOS BOTONES DEL MENU
 function generarMenu(){
     const menu = document.createElement('article');
     const jugar = document.createElement('div');
     const niveles = document.createElement('div');
-    const opciones = document.createElement('div');
+    const marcador = document.createElement('div');
     const teclas= document.createElement('div');
 
+    /* MENU */
     menu.setAttribute("id", 'menu');
     menu.classList.add("menu");
     
+    /* JUGAR */
     jugar.setAttribute("id", 'jugar');
     jugar.classList.add("jugar");
     jugar.setAttribute("onclick", 'onJugarClick()');
-    jugar.innerHTML = '<img src="src/img/jugar.png" alt="pausa">'
+    jugar.innerHTML = '<img src="src/img/Skirmish5.webp" alt="pausa">'
     
+    /* NIVELES */
     niveles.setAttribute("id", 'niveles');
     niveles.classList.add("niveles");
     niveles.setAttribute("onclick", 'onNivelesClick()');
-    niveles.innerHTML = '<img src="src/img/niveles.png" alt="pausa">'
+    niveles.innerHTML = '<img src="src/img/Stages.webp" alt="pausa">'
     
-    
-    opciones.setAttribute("id", 'opciones');
-    opciones.classList.add("opciones");
-    opciones.setAttribute("onclick", 'onOpcionesClick()');
-    opciones.innerHTML = '<img src="src/img/opciones.png" alt="pausa">'
+    /* MARCADOR */
+    marcador.setAttribute("id", 'marcador');
+    marcador.classList.add("marcador");
+    marcador.setAttribute("onclick", 'onMarcadorClick()');
+    marcador.innerHTML = '<img src="src/img/marcadores.webp" alt="pausa">'
     
     teclas.setAttribute("id", 'teclas');
     teclas.classList.add("teclas");
@@ -793,13 +910,13 @@ function generarMenu(){
     menu.innerHTML = '<h2>COD WarZombie</h2>'
     menu.appendChild(jugar);
     menu.appendChild(niveles);
-    menu.appendChild(opciones);
+    menu.appendChild(marcador);
     menu.appendChild(teclas);
 
     juego.appendChild(menu);
 }
-/* MENU */
 
+/* LLAMA A LA FUNCION DEL MENU */
 generarMenu();
 
 /* -------------------------------------------------------------------------- */
@@ -837,9 +954,10 @@ let arrayEnemigos;
 
 let arrayObstacle;
 
-/* event listener */
+/* event listener Y TICK*/
 let tick;
 
+/* ESCUCHA AL TECLADO PARA REALIZAR LAS ACCIONES DEN EL JUEGO */
 document.addEventListener("keydown", movimiento);
 document.addEventListener("click", clickDisparo);
 
@@ -892,4 +1010,6 @@ function traerDatosFormulario() {
     }
 }
 
-
+/* -------------------------------------------------------------------------- */
+/*                             FIN DEL JAVASCRIPT                             */
+/* -------------------------------------------------------------------------- */
