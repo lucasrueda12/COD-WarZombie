@@ -427,7 +427,7 @@ function choqueObjtos(ob1, ob2){
         && ob1.y < ob2.y + ob2.alto && ob1.y + ob1.alto > ob2.y);
 }
 
-// SE ESCAPO DEL ENTORNO
+// SE ESCAPO DEL ENTORNO la bala
 function escapoRango({x, y}){
     return (x < jugador.x-600 || x> jugador.x+600 || y < jugador.y-600 || y> jugador.y +600);
 }
@@ -802,7 +802,7 @@ const mostrarScores = async () => {
     data.forEach((dato) => {
         acumulador += `<p class="jugadores"> ${dato.name}  ${dato.score}  ${dato.ronda}</p>`;
     });
-    nodo.innerHTML = `<p>nombre------score:------ronda:</p>` +acumulador;
+    nodo.innerHTML = `<p>nombre------score------ronda</p>` +acumulador;
     let marcador = document.querySelector('#menuMarcador');
     marcador.appendChild(nodo);
 }
@@ -812,6 +812,9 @@ function volverAtrasMarcador(){
     marcador.remove();
 }
 
+/* -------------------------------------------------------------------------- */
+/*                                    JUGAR                                   */
+/* -------------------------------------------------------------------------- */
 // BOTON PARA EMPEZAR EL JUEGO, INICIALIZA LA VARIABLES NECESARIAS, LLAMA A LAS FUNCIONES DE LOS ENEMIGOS Y LOS OBSTACULOS.
 // DESPUES DE ESTAR TODO LISTO ACTIVA EL JUEGO Y EL TICK
 function onJugarClick(){
