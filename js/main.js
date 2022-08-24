@@ -2,7 +2,7 @@
 /* -------------------------------------------------------------------------- */
 /*                                LOCAL STORAGE                               */
 /* -------------------------------------------------------------------------- */
-
+/* Pido el record del local storage */
 let record = localStorage.getItem('record') ?? 0;
 let subsStorage= localStorage.getItem('suscriptores') ?? [];
 suscriptores= JSON.parse(subsStorage);
@@ -270,13 +270,13 @@ function movimiento(event) {
 
     }
     /* PAUSA */
-
     /* AND */
     event.key == 'p' && (gamePause = !gamePause);
 
     mostrarPausa();
 }
 
+/* obtiene la xy de la bala y de donde se apreto el mouse. con eso obtiene el angulo para que salga en esa direccion */
 function getAngulo(balax, balay, mousex, mousey){
     return angulo = Math.atan2(balay- mousey, balax- mousex);
 }
@@ -345,7 +345,7 @@ function moverIzquierda(){
     jugador.nodo.style.left = jugador.x - jugador.speed + "px";
     jugador.cambiarAngulo(pi);
 }
-/* MOV DEL MAPA */
+/* MOV DEL MAPA y reaccion de obstaculo y enemigos con ello */
 function moverMapaIzquierda(){
     if(mapaDelJuego.x != 0){
         mapaDelJuego.nodo.style.left = mapaDelJuego.x + jugador.speed + "px";
