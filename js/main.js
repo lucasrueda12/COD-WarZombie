@@ -5,7 +5,10 @@
 /* Pido el record del local storage */
 let record = localStorage.getItem('record') ?? 0;
 let subsStorage= localStorage.getItem('suscriptores') ?? [];
-suscriptores= JSON.parse(subsStorage);
+
+if(subsStorage != []){
+    suscriptores= JSON.parse(subsStorage);
+}
 
 /* subi la variable juego para que no tenga conflictos con funciones y variables */
 const juego = document.querySelector('#juego');
